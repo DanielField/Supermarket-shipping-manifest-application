@@ -1,7 +1,6 @@
-/**
- * 
- */
 package stock;
+
+import exception.InvalidItemException;
 
 /** 
  * An item, possessing the following properties:
@@ -43,10 +42,9 @@ public class Item {
 		return name;
 	}
 	
-	// TODO: InvalidItemException
-	public void setName(String name) throws Exception {
+	public void setName(String name) throws InvalidItemException {
 		if (name.isEmpty()) {
-			throw new Exception();
+			throw new InvalidItemException();
 		}
 		this.name = name;
 	}
