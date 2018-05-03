@@ -1,6 +1,3 @@
-/**
- * 
- */
 package supermart;
 
 /**
@@ -17,8 +14,7 @@ public class Supermart {
 	 * @param args Command line arguments.
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+		// TODO: Create JFrame and set the content pane to MainPanel.
 	}
 
 }
