@@ -1,10 +1,7 @@
 package stock;
 
-import java.util.AbstractCollection;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import exception.InvalidItemException;
 import exception.StockException;
@@ -15,11 +12,11 @@ import exception.StockException;
  * 
  * @author Daniel Field 
  */
-public class Stock extends AbstractCollection<ItemStock> {
+public class Stock extends ArrayList<ItemStock> {
 
 	// List containing all of the items and their quantities.
 	// The arrays are of size 3, containing an item ID, item, and quantity.
-	private List<ItemStock> stock;
+	private ArrayList<ItemStock> stock;
 	
 	/**
 	 * Construct the stock class.
@@ -174,7 +171,6 @@ public class Stock extends AbstractCollection<ItemStock> {
 	 * This does not account for the quantity of each item.
 	 * 
 	 * @return Returns the number of unique items.
-	 * @see java.util.AbstractCollection#size()
 	 */
 	public int uniqueItemCount() {
 		return stock.size();
@@ -223,46 +219,13 @@ public class Stock extends AbstractCollection<ItemStock> {
 		return false;
 	}
 
-	/**
-	 * @see java.util.AbstractCollection#iterator()
-	 */
 	@Override
 	public Iterator<ItemStock> iterator() {
 		return stock.iterator();
 	}
 
-	/**
-	 * This does the same as stock.uniqueItemCount().
-	 * 
-	 * @see stock#uniqueItemCount()
-	 * @see java.util.AbstractCollection#size()
-	 */
 	@Override
 	public int size() {
 		return stock.size();
-	}
-		
-	@Override
-	public boolean add(ItemStock e) {
-		// TODO Auto-generated method stub
-		return stock.add(e);
-	}
-	
-	@Override
-	public boolean addAll(Collection<? extends ItemStock> c) {
-		// TODO Auto-generated method stub
-		return stock.addAll(c);
-	}
-	
-	@Override
-	public boolean remove(Object o) {
-		// TODO Auto-generated method stub
-		return stock.remove(o);
-	}
-	
-	@Override
-	public boolean removeAll(Collection<?> c) {
-		// TODO Auto-generated method stub
-		return stock.removeAll(c);
 	}
 }

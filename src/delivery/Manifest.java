@@ -18,15 +18,13 @@ public class Manifest extends AbstractList<Truck> {
 		manifest = new ArrayList<>();
 	}
 	
-	@Override
-	public boolean add(Truck e) {
-		return manifest.add(e);
+	public boolean remove(Truck o) {
+		return manifest.remove(o);
 	}
 	
 	@Override
-	public boolean remove(Object o) {
-		// TODO Auto-generated method stub
-		return manifest.remove(o);
+	public boolean add(Truck e) {
+		return manifest.add(e);
 	}
 	
 	@Override
