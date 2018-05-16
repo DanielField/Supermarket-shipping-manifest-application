@@ -75,4 +75,9 @@ public class OrdinaryTruck extends Truck {
 		return cargo.stockTotal();
 	}
 
+	@Override
+	public Stock getCargo() {
+		return cargo;
+	}
+
 }

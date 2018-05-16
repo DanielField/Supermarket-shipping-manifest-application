@@ -25,6 +25,7 @@ public abstract class Truck {
 
 	public abstract void addToCargo(Stock cargo) throws InvalidItemException, StockException;
 	public abstract void addToCargo(Item item, int quantity) throws InvalidItemException, StockException;
+	public abstract Stock getCargo();
 
 	public abstract void removeFromCargo(Item item);
 	public abstract void removeFromCargo(Item item, int quantity) throws StockException, InvalidItemException;

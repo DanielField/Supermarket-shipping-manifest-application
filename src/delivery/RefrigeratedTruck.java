@@ -97,4 +97,8 @@ public class RefrigeratedTruck extends Truck {
 		return cargo.stockTotal();
 	}
 
+	@Override
+	public Stock getCargo() {
+		return cargo;
+	}
 }
