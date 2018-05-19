@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import delivery.Manifest;
+import delivery.RefrigeratedTruck;
 import delivery.Truck;
 import stock.ItemStock;
 
@@ -29,7 +30,11 @@ public class Writer {
 		
 		for (int y = 0; y < manifest.size(); y++) {
 			Truck truck = manifest.get(y);
-			bw.append(">" + truck.getClass().getName());
+			if (truck.getClass() == RefrigeratedTruck.class) {
+				bw.append(">Refrigerated truck");
+			} else {
+				bw.append(">Ordinary truck");
+			}
 			bw.newLine();
 			for (ItemStock is : truck.getCargo()) {
 				bw.append(String.format("%s,%d", is.getItem().getName(), is.getQuantity()));
