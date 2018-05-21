@@ -62,9 +62,9 @@ public class MainPanel extends JPanel {
 			DisplayErrorMessage("One or more items in the inventory file are invalid.");
 		}
 
-		InitialiseButtons();
 		InitialiseLabels();
 		InitialiseTables();
+		InitialiseButtons();
 		
 		// This is the default display when the programme is loaded.
 		DisplayStoreInformation();
@@ -82,6 +82,7 @@ public class MainPanel extends JPanel {
 	
 	private void InitialiseButtons() {
 		btnStoreInfo = Components.CreateButton(this, layout, "Store Info", 10, 10);
+		layout.putConstraint(SpringLayout.EAST, btnStoreInfo, -10, SpringLayout.WEST, spInventory);
 		btnStoreInfo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -91,6 +92,7 @@ public class MainPanel extends JPanel {
 		});
 		
 		btnInventory = Components.CreateButton(this, layout, "Inventory", 10, 40);
+		layout.putConstraint(SpringLayout.EAST, btnInventory, -10, SpringLayout.WEST, spInventory);
 		btnInventory.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -100,6 +102,7 @@ public class MainPanel extends JPanel {
 		});
 		
 		btnManifest = Components.CreateButton(this, layout, "Manifest", 10, 70);
+		layout.putConstraint(SpringLayout.EAST, btnManifest, -10, SpringLayout.WEST, spInventory);
 		btnManifest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -108,6 +111,7 @@ public class MainPanel extends JPanel {
 		});
 		
 		btnSalesLog = Components.CreateButton(this, layout, "Sales Log", 10, 100);
+		layout.putConstraint(SpringLayout.EAST, btnSalesLog, -10, SpringLayout.WEST, spInventory);
 		btnSalesLog.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
