@@ -5,7 +5,6 @@ package gui;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.GridLayout;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;

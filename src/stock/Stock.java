@@ -3,7 +3,6 @@ package stock;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import delivery.Truck;
 import exception.InvalidItemException;
 import exception.StockException;
 
@@ -14,7 +13,8 @@ import exception.StockException;
  * @author Daniel Field 
  */
 public class Stock extends ArrayList<ItemStock> {
-
+	private static final long serialVersionUID = 1L;
+	
 	// List containing all of the items and their quantities.
 	// The arrays are of size 3, containing an item ID, item, and quantity.
 	private ArrayList<ItemStock> stock;

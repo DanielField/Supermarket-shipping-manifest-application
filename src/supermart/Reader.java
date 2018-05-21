@@ -29,6 +29,7 @@ public class Reader {
 			info = line.split(",");
 		}
 		
+		br.close();
 		return info;
 	}
 	
@@ -68,6 +69,7 @@ public class Reader {
 			stock.addNewItem(item, item.getReorderAmount());
 		}
 		
+		br.close();
 		return stock;
 	}
 	
@@ -79,7 +81,7 @@ public class Reader {
 		String line;
 		String[] splitLine;
 		
-		for (int i = 0; (line = br.readLine()) != null; i++) {
+		while ((line = br.readLine()) != null) {
 			splitLine = line.split(",");
 			
 			Sale sale = new Sale();

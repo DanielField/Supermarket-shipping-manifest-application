@@ -3,8 +3,6 @@
  */
 package supermart;
 
-import stock.Item;
-
 /**
  * @author Daniel Field
  *
