@@ -3,6 +3,7 @@ package stock;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import delivery.Truck;
 import exception.InvalidItemException;
 import exception.StockException;
 
@@ -134,6 +135,11 @@ public class Stock extends ArrayList<ItemStock> {
 		return increaseQuantity(itemID, -amount); 
 	}
 	
+	@Override
+	public ItemStock get(int index) {
+		return stock.get(index);
+	}
+	
 	/**
 	 * Get an ItemStock by it's item ID.
 	 * 
@@ -160,6 +166,22 @@ public class Stock extends ArrayList<ItemStock> {
 	public ItemStock getItemStock(Item item) throws InvalidItemException {
 		for (ItemStock itemStock : stock) {
 			if (itemStock.getItem() == item) {
+				return itemStock;
+			}
+		}
+		throw new InvalidItemException("Item does not exist.");
+	}
+	
+	/**
+	 * Get an ItemStock by it's item name.
+	 * 
+	 * @param name Name of the item.
+	 * @return The ItemStock object.
+	 * @throws InvalidItemException Throw if the item does not exist.
+	 */
+	public ItemStock getItemStock(String name) throws InvalidItemException {
+		for (ItemStock itemStock : stock) {
+			if (itemStock.getItem().getName() == name) {
 				return itemStock;
 			}
 		}

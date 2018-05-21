@@ -20,6 +20,7 @@ import gui.MainPanel;
 import stock.Item;
 import stock.OrdinaryItem;
 import stock.PerishableItem;
+import stock.Stock;
 
 /**
  * The primary class for the application. This is responsible for setting everything up.
@@ -65,10 +66,19 @@ public class Supermart {
 		m.add(t1);
 		m.add(t2);
 		
+		Stock properties = new Stock();
+		
+		
 		try {
+			properties.addNewItem(i4, 200);
+			properties.addNewItem(i, 100);
+			
 			Writer.CreateNewFile("test.csv");
-			Writer.WriteManifestToCSV("test.csv", m);
+			Writer.WriteItemPropertiesToCSV("test.csv", properties);
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidItemException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -83,7 +93,7 @@ public class Supermart {
 				frame.setSize(DEFAULT_W, DEFAULT_H);
 				
 				frame.setVisible(true);
-				frame.setResizable(false);
+				frame.setResizable(true);
 				frame.setTitle(APP_NAME);
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				

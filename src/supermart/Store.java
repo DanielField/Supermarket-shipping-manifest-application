@@ -13,7 +13,7 @@ import stock.Stock;
  */
 public class Store {
 	
-	private static String name = "";
+	private static String name = "Supermart";
 	private static double capital = 100000;
 	private static Stock inventory = new Stock();
 	
@@ -27,27 +27,27 @@ public class Store {
 		return StoreHolder.INSTANCE;
 	}
 	
-	public static void setName(String name) {
+	public void setName(String name) {
 		Store.name = name;
 	}
 	
-	public static String getName() {
+	public String getName() {
 		return name;
 	}
 	
-	public static void setCapital(double capital) {
+	public void setCapital(double capital) {
 		Store.capital = capital;
 	}
 	
-	public static double getCapital() {
+	public double getCapital() {
 		return capital;
 	}
 	
-	public static void setInventory(Stock inventory) {
+	public void setInventory(Stock inventory) {
 		Store.inventory = inventory;
 	}
 	
-	public static Stock getInventory() {
+	public Stock getInventory() {
 		return inventory;
 	}
 }

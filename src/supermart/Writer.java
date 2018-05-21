@@ -34,6 +34,8 @@ public class Writer {
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
 		
+		bw.write(""); // clear the file
+		
 		for (int i = 0; i < manifest.size(); i++) {
 			Truck truck = manifest.get(i);
 			if (truck.getClass() == RefrigeratedTruck.class) {
@@ -55,18 +57,21 @@ public class Writer {
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
 		
+		bw.write(""); // clear the file
+		
 		for (int i = 0; i < s.size(); i++) {
 			ItemStock is = s.get(i);
 			Item item = is.getItem();
+			
 			if (item.getClass() == OrdinaryItem.class) {
-				bw.append(String.format("%s,%d,%d,%d,%d", 
+				bw.append(String.format("%s,%f,%f,%d,%d", 
 						item.getName(),
 						item.getManufacturingCost(),
 						item.getSellPrice(),
 						item.getReorderPoint(),
 						item.getReorderAmount()));
 			} else {
-				bw.append(String.format("%s,%d,%d,%d,%d,%d", 
+				bw.append(String.format("%s,%f,%f,%d,%d,%f", 
 						item.getName(),
 						item.getManufacturingCost(),
 						item.getSellPrice(),
@@ -74,8 +79,25 @@ public class Writer {
 						item.getReorderAmount(), 
 						((PerishableItem)item).getTemperature()));
 			}
+			
+			bw.newLine();
 		}
+		
+		bw.close();
 	}
 	
-	//public static void WriteSalesLogToCSV(String file, )
+	public static void WriteSalesLogToCSV(String file, SaleList sales) throws IOException {
+		FileWriter fw = new FileWriter(file);
+		BufferedWriter bw = new BufferedWriter(fw);
+		
+		bw.write(""); // clear the file
+		
+		for (int i = 0; i < sales.size(); i++) {
+			Sale sale = sales.getSale(i);
+			bw.append(String.format("%s,%d", sale.getItemName(), sale.getQuantity()));
+			bw.newLine();
+		}
+		
+		bw.close();
+	}
 }
