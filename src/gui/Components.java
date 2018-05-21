@@ -24,8 +24,7 @@ public class Components {
 	
 	public static JButton CreateButton(Component anchor, SpringLayout layout, String text, int x, int y) {
 		JButton btn = new JButton(text);
-		
-		btn.setLayout(layout);
+
 		btn.setVisible(true);
 		
 		layout.putConstraint(SpringLayout.WEST, btn, x, SpringLayout.WEST, anchor);
@@ -36,9 +35,6 @@ public class Components {
 	
 	public static JLabel CreateLabel(Component contentPane, SpringLayout layout, String text, int x, int y) {
 		JLabel lbl = new JLabel(text);
-		
-		lbl.setLayout(layout);
-		lbl.setVisible(true);
 		
 		layout.putConstraint(SpringLayout.WEST, lbl, x, SpringLayout.WEST, contentPane);
 		layout.putConstraint(SpringLayout.NORTH, lbl, y, SpringLayout.NORTH, contentPane);
