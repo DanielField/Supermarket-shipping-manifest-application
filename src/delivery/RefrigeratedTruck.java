@@ -7,6 +7,7 @@ import exception.InvalidItemException;
 import exception.StockException;
 import stock.Item;
 import stock.ItemStock;
+import stock.PerishableItem;
 import stock.Stock;
 
 /**
@@ -61,13 +62,15 @@ public class RefrigeratedTruck extends Truck {
 
 	@Override
 	public void addToCargo(Item item, int quantity) throws InvalidItemException, StockException {
-		if (item.getTemperature() >= -20 && item.getTemperature() <= 10) {
-			if (cargo.containsItem(item)) {
-				ItemStock is = cargo.getItemStock(item);
-				cargo.increaseQuantity(is.getItemID(), quantity);
-			}
-			else cargo.addNewItem(item, quantity);
-		} else throw new InvalidItemException("Item temperature is not valid for this truck.");
+		if (item.getClass() == PerishableItem.class) {
+			if ((((PerishableItem)item).getTemperature() >= temperature && ((PerishableItem)item).getTemperature() <= 10) == false)
+				throw new InvalidItemException("Item temperature is not valid for this truck.");
+		} 
+		if (cargo.containsItem(item)) {
+			ItemStock is = cargo.getItemStock(item);
+			cargo.increaseQuantity(is.getItemID(), quantity);
+		}
+		else cargo.addNewItem(item, quantity);
 	}
 
 	@Override

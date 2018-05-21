@@ -13,79 +13,24 @@ import exception.InvalidItemException;
  *
  * @author Daniel Field
  */
-public class Item {	
-	private String name;
-	private double manufacturingCost;
-	private double sellPrice;
-	private int reorderPoint;
-	private int reorderAmount;
-	private double temperature;
+public abstract class Item {		
+	public abstract String getName();
 	
-	public Item(String name, double manufacturingCost, double sellPrice, int reorderPoint, int reorderAmount) {
-		this.name = name;
-		this.manufacturingCost = manufacturingCost;
-		this.sellPrice = sellPrice;
-		this.reorderAmount = reorderAmount;
-		this.reorderPoint = reorderPoint;
-	}
+	public abstract void setName(String name) throws InvalidItemException;
 	
-	public Item(String name, double manufacturingCost, double sellPrice, int reorderPoint, int reorderAmount, int temperature) {
-		this.name = name;
-		this.manufacturingCost = manufacturingCost;
-		this.sellPrice = sellPrice;
-		this.reorderAmount = reorderAmount;
-		this.reorderPoint = reorderPoint;
-		this.temperature = temperature;
-	}
+	public abstract double getManufacturingCost();
 	
-	public String getName() {
-		return name;
-	}
+	public abstract void setManufacturingCost(double manufacturingCost);
 	
-	public void setName(String name) throws InvalidItemException {
-		if (name.isEmpty()) {
-			throw new InvalidItemException();
-		}
-		this.name = name;
-	}
+	public abstract double getSellPrice();
 	
-	public double getManufacturingCost() {
-		return manufacturingCost;
-	}
+	public abstract void setSellPrice(double sellPrice);
 	
-	public void setManufacturingCost(double manufacturingCost) {
-		this.manufacturingCost = manufacturingCost;
-	}
+	public abstract int getReorderPoint();
 	
-	public double getSellPrice() {
-		return sellPrice;
-	}
+	public abstract void setReorderPoint(int reorderPoint);
 	
-	public void setSellPrice(double sellPrice) {
-		this.sellPrice = sellPrice;
-	}
+	public abstract int getReorderAmount();
 	
-	public int getReorderPoint() {
-		return reorderPoint;
-	}
-	
-	public void setReorderPoint(int reorderPoint) {
-		this.reorderPoint = reorderPoint;
-	}
-	
-	public int getReorderAmount() {
-		return reorderAmount;
-	}
-	
-	public void setReorderAmount(int reorderAmount) {
-		this.reorderAmount = reorderAmount;
-	}
-	
-	public double getTemperature() {
-		return temperature;
-	}
-	
-	public void setTemperature(double temperature) {
-		this.temperature = temperature;
-	}
+	public abstract void setReorderAmount(int reorderAmount);
 }

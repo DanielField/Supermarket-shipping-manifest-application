@@ -18,6 +18,8 @@ import exception.InvalidItemException;
 import exception.StockException;
 import gui.MainPanel;
 import stock.Item;
+import stock.OrdinaryItem;
+import stock.PerishableItem;
 
 /**
  * The primary class for the application. This is responsible for setting everything up.
@@ -42,10 +44,10 @@ public class Supermart {
 		OrdinaryTruck t1 = new OrdinaryTruck();
 		RefrigeratedTruck t2 = new RefrigeratedTruck();
 		
-		Item i = new Item("Apple", 0.1, 1, 50, 500);
-		Item i2 = new Item("Orange", 0.2, 7, 40, 502);
-		Item i3 = new Item("dacdsvdxzs", 0.15, 14, 540, 5400);
-		Item i4 = new Item("dghsgfvfg", 5, 1, 5, 50);
+		Item i = new PerishableItem("Apple", 0.1, 1, 50, 500, 10);
+		Item i2 = new PerishableItem("Orange", 0.2, 7, 40, 502, 10);
+		Item i3 = new OrdinaryItem("dacdsvdxzs", 0.15, 14, 540, 5400);
+		Item i4 = new OrdinaryItem("dghsgfvfg", 5, 1, 5, 50);
 		
 		try {
 			t2.addToCargo(i, 20);
@@ -64,6 +66,7 @@ public class Supermart {
 		m.add(t2);
 		
 		try {
+			Writer.CreateNewFile("test.csv");
 			Writer.WriteManifestToCSV("test.csv", m);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
