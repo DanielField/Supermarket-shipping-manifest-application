@@ -1,5 +1,6 @@
 package supermart;
 
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import delivery.Manifest;
@@ -127,5 +129,15 @@ public class Supermart {
 		menuBar.add(help);
 		
 		frm.setJMenuBar(menuBar);
+	}
+	
+	/**
+	 * Useful method for displaying a pop-up error message.
+	 * 
+	 * @param parent Determines the frame in which the dialog is displayed.
+	 * @param message Text to be displayed.
+	 */
+	public static void DisplayErrorMessage(Component parent, String message) {
+		JOptionPane.showMessageDialog(parent, message, "Application Error", JOptionPane.ERROR_MESSAGE);
 	}
 }

@@ -8,9 +8,13 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 import exception.InvalidItemException;
 import stock.Item;
@@ -39,6 +43,9 @@ public class MainPanel extends JPanel {
 	JLabel lblName, lblCapital;
 	JButton btnStoreInfo, btnInventory, btnManifest, btnSalesLog;
 	
+	String status = "";
+	JTextArea txtStatus;
+	
 	JScrollPane spInventory = null;
 	JTable tblInventory = null;
 	
@@ -50,24 +57,29 @@ public class MainPanel extends JPanel {
 		
 		try {
 			LoadStoreInformation(Strings.STORE_INFO_CSV);
+			status += "Store information loaded into memory.\r\n";
 		} catch (IOException e) {
-			DisplayErrorMessage("Unable to load the store information file. Setting the information to default.");
+			status += "Unable to load the store information file. Setting the information to default.\\r\\n";
+			
 		}
 		
 		try {
 			LoadInventory(Strings.ITEM_PROPERTIES_CSV);
+			status += "Inventory loaded into memory.\r\n";
 		} catch (IOException ioe) {
-			DisplayErrorMessage("Unable to load the inventory.");
+			status += "Unable to load the inventory.\r\n";
 		} catch (InvalidItemException iie) {
-			DisplayErrorMessage("One or more items in the inventory file are invalid.");
+			status += "One or more items in the inventory file are invalid.\\r\\n";
 		}
 
 		InitialiseLabels();
 		InitialiseTables();
 		InitialiseButtons();
+		InitialiseStatusField();
 		
 		// This is the default display when the programme is loaded.
 		DisplayStoreInformation();
+		txtStatus.append("GUI loaded.\r\nDisplaying store information.\r\n");
 	}
 	
 	private void LoadStoreInformation(String file) throws IOException {
@@ -88,6 +100,7 @@ public class MainPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				ClearScreen();
 				DisplayStoreInformation();
+				txtStatus.append("Displaying store information.\r\n");
 			}
 		});
 		
@@ -98,6 +111,7 @@ public class MainPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				ClearScreen();
 				DisplayInventory();
+				txtStatus.append("Displaying store inventory.\r\n");
 			}
 		});
 		
@@ -107,6 +121,7 @@ public class MainPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ClearScreen();
+				txtStatus.append("Displaying truck manifest.\r\n");
 			}
 		});
 		
@@ -116,19 +131,12 @@ public class MainPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				ClearScreen();
+				txtStatus.append("Displaying store sales logs.\r\n");
 			}
 		});
 		
 		// Add the components to this JPanel
 		Components.addComponents(this, btnStoreInfo, btnInventory, btnManifest, btnSalesLog);
-	}
-	
-	/**
-	 * Clear the content from the JPanel such as the inventory table, sales log, manifest, or store info.
-	 */
-	private void ClearScreen() {
-		HideInventory();
-		HideStoreInformation();
 	}
 	
 	private void InitialiseTables() {
@@ -155,7 +163,6 @@ public class MainPanel extends JPanel {
 		tblInventory = new JTable(inventoryArray, headings);
 		
 		spInventory = new JScrollPane(tblInventory);
-		spInventory.setBounds(150, 10, 450, 400);
 		spInventory.setVisible(false);
 		
 		layout.putConstraint(SpringLayout.NORTH, spInventory, 10, SpringLayout.NORTH, this);
@@ -173,6 +180,41 @@ public class MainPanel extends JPanel {
 		
 		// Add the components to this JPanel
 		Components.addComponents(this, lblName, lblCapital);
+	}
+	
+	private void InitialiseStatusField() {
+		txtStatus = Components.CreateTextArea(this, layout, status, 150, 0);
+		txtStatus.setEditable(false);
+		
+		JScrollPane spStatus = new JScrollPane(txtStatus);
+		spStatus.setVisible(true);
+		
+		txtStatus.getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				JScrollBar v = spStatus.getVerticalScrollBar();
+				v.setValue(v.getMaximum());
+			}
+			@Override
+			public void removeUpdate(DocumentEvent e) {}
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+		});
+		
+		layout.putConstraint(SpringLayout.NORTH, spStatus, 10, SpringLayout.SOUTH, spInventory);
+		layout.putConstraint(SpringLayout.WEST, spStatus, 0, SpringLayout.WEST, spInventory);
+		layout.putConstraint(SpringLayout.SOUTH, spStatus, -10, SpringLayout.SOUTH, this);
+		layout.putConstraint(SpringLayout.EAST, spStatus, -10, SpringLayout.EAST, this);
+	
+		add(spStatus);
+	}
+	
+	/**
+	 * Clear the content from the JPanel such as the inventory table, sales log, manifest, or store info.
+	 */
+	private void ClearScreen() {
+		HideInventory();
+		HideStoreInformation();
 	}
 	
 	private void DisplayStoreInformation() {
@@ -195,10 +237,6 @@ public class MainPanel extends JPanel {
 	
 	private void HideInventory() {
 		spInventory.setVisible(false);
-	}
-	
-	private void DisplayErrorMessage(String message) {
-		JOptionPane.showMessageDialog(this, message, "Application Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
 	private String FormatDollars(double dollars) {
