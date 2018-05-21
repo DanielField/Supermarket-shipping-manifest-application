@@ -8,6 +8,7 @@ import java.awt.Container;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
 
 /**
@@ -39,5 +40,14 @@ public class Components {
 		layout.putConstraint(SpringLayout.NORTH, lbl, y, SpringLayout.NORTH, contentPane);
 		
 		return lbl;
+	}
+
+	public static JTextArea CreateTextArea(Component contentPane, SpringLayout layout, String text, int x, int y) {
+		JTextArea txt = new JTextArea(text);
+		
+		layout.putConstraint(SpringLayout.WEST, txt, x, SpringLayout.WEST, contentPane);
+		layout.putConstraint(SpringLayout.NORTH, txt, y, SpringLayout.NORTH, contentPane);
+		
+		return txt;
 	}
 }
