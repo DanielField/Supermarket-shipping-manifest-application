@@ -31,9 +31,9 @@ public class Writer {
 		for (int y = 0; y < manifest.size(); y++) {
 			Truck truck = manifest.get(y);
 			if (truck.getClass() == RefrigeratedTruck.class) {
-				bw.append(">Refrigerated truck");
+				bw.append(">Refrigerated");
 			} else {
-				bw.append(">Ordinary truck");
+				bw.append(">Ordinary");
 			}
 			bw.newLine();
 			for (ItemStock is : truck.getCargo()) {
