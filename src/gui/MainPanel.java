@@ -1,7 +1,5 @@
 package gui;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -13,7 +11,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SpringLayout;
-import javax.swing.SwingWorker;
 
 import exception.InvalidItemException;
 import stock.Item;
@@ -48,9 +45,6 @@ public class MainPanel extends JPanel {
 	public MainPanel() {
 		layout = new SpringLayout();
 		setLayout(layout);
-
-		InitialiseButtons();
-		InitialiseLabels();
 		
 		store = Store.getInstance();
 		
@@ -58,8 +52,6 @@ public class MainPanel extends JPanel {
 			LoadStoreInformation(Strings.STORE_INFO_CSV);
 		} catch (IOException e) {
 			DisplayErrorMessage("Unable to load the store information file. Setting the information to default.");
-		} finally {
-			DisplayStoreInformation();
 		}
 		
 		try {
@@ -69,6 +61,13 @@ public class MainPanel extends JPanel {
 		} catch (InvalidItemException iie) {
 			DisplayErrorMessage("One or more items in the inventory file are invalid.");
 		}
+
+		InitialiseButtons();
+		InitialiseLabels();
+		InitialiseTables();
+		
+		// This is the default display when the programme is loaded.
+		DisplayStoreInformation();
 	}
 	
 	private void LoadStoreInformation(String file) throws IOException {
@@ -86,6 +85,7 @@ public class MainPanel extends JPanel {
 		btnStoreInfo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				ClearScreen();
 				DisplayStoreInformation();
 			}
 		});
@@ -94,7 +94,7 @@ public class MainPanel extends JPanel {
 		btnInventory.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				HideStoreInformation();
+				ClearScreen();
 				DisplayInventory();
 			}
 		});
@@ -103,7 +103,7 @@ public class MainPanel extends JPanel {
 		btnManifest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				HideStoreInformation();
+				ClearScreen();
 			}
 		});
 		
@@ -111,12 +111,55 @@ public class MainPanel extends JPanel {
 		btnSalesLog.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				HideStoreInformation();
+				ClearScreen();
 			}
 		});
 		
 		// Add the components to this JPanel
 		Components.addComponents(this, btnStoreInfo, btnInventory, btnManifest, btnSalesLog);
+	}
+	
+	/**
+	 * Clear the content from the JPanel such as the inventory table, sales log, manifest, or store info.
+	 */
+	private void ClearScreen() {
+		HideInventory();
+		HideStoreInformation();
+	}
+	
+	private void InitialiseTables() {
+		String[] headings = {"Name", "Quantity", "Manufacturing Cost ($)", "Sell Price ($)", "Reorder Point", "Reorder Amount", "Temperature"};
+		
+		String[][] inventoryArray = new String[inventory.size()][7];
+		
+		for (int i = 0; i < inventory.size(); i++) {
+			ItemStock is = inventory.get(i);
+			Item item = is.getItem();
+			int quantity = is.getQuantity();
+			
+			inventoryArray[i][0] = item.getName();
+			inventoryArray[i][1] = Integer.toString(quantity);
+			inventoryArray[i][2] = Double.toString( item.getManufacturingCost() );
+			inventoryArray[i][3] = Double.toString( item.getSellPrice() );
+			inventoryArray[i][4] = Integer.toString( item.getReorderPoint() );
+			inventoryArray[i][5] = Integer.toString( item.getReorderAmount() );
+			
+			if (item.getClass() == PerishableItem.class)
+				inventoryArray[i][6] = Double.toString( ((PerishableItem)item).getTemperature() );
+		}
+		
+		tblInventory = new JTable(inventoryArray, headings);
+		
+		spInventory = new JScrollPane(tblInventory);
+		spInventory.setBounds(150, 10, 450, 400);
+		spInventory.setVisible(false);
+		
+		layout.putConstraint(SpringLayout.NORTH, spInventory, 10, SpringLayout.NORTH, this);
+		layout.putConstraint(SpringLayout.WEST, spInventory, 150, SpringLayout.WEST, this);
+		layout.putConstraint(SpringLayout.EAST, spInventory, -10, SpringLayout.EAST, this);
+		layout.putConstraint(SpringLayout.SOUTH, spInventory, -150, SpringLayout.SOUTH, this);
+		
+		add(spInventory);
 	}
 	
 	private void InitialiseLabels() {
@@ -142,43 +185,12 @@ public class MainPanel extends JPanel {
 		lblCapital.setVisible(false);
 	}
 	
-	private void DisplayInventory() {
-		if (tblInventory == null) {
-			String[] headings = {"Name", "Quantity", "Manufacturing Cost ($)", "Sell Price ($)", "Reorder Point", "Reorder Amount", "Temperature"};
-			
-			String[][] inventoryArray = new String[inventory.size()][7];
-			
-			for (int i = 0; i < inventory.size(); i++) {
-				ItemStock is = inventory.get(i);
-				Item item = is.getItem();
-				int quantity = is.getQuantity();
-				
-				inventoryArray[i][0] = item.getName();
-				inventoryArray[i][1] = Integer.toString(quantity);
-				inventoryArray[i][2] = Double.toString( item.getManufacturingCost() );
-				inventoryArray[i][3] = Double.toString( item.getSellPrice() );
-				inventoryArray[i][4] = Integer.toString( item.getReorderPoint() );
-				inventoryArray[i][5] = Integer.toString( item.getReorderAmount() );
-				
-				if (item.getClass() == PerishableItem.class)
-					inventoryArray[i][6] = Double.toString( ((PerishableItem)item).getTemperature() );
-			}
-			
-			tblInventory = new JTable(inventoryArray, headings);
-		}
-		
-		// If it hasn't initially loaded yet, get it all set up.
-		if (spInventory == null) {
-			spInventory = new JScrollPane(tblInventory);
-			spInventory.setBounds(150, 10, 450, 400);
-			layout.putConstraint(SpringLayout.NORTH, spInventory, 10, SpringLayout.NORTH, this);
-			layout.putConstraint(SpringLayout.WEST, spInventory, 150, SpringLayout.WEST, this);
-			layout.putConstraint(SpringLayout.EAST, spInventory, -10, SpringLayout.EAST, this);
-			layout.putConstraint(SpringLayout.SOUTH, spInventory, -150, SpringLayout.SOUTH, this);
-			add(spInventory);
-		}
-		
+	private void DisplayInventory() {	
 		spInventory.setVisible(true);
+	}
+	
+	private void HideInventory() {
+		spInventory.setVisible(false);
 	}
 	
 	private void DisplayErrorMessage(String message) {
