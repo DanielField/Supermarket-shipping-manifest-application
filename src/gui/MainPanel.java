@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -15,8 +16,13 @@ import javax.swing.JTextArea;
 import javax.swing.SpringLayout;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 
+import delivery.Manifest;
+import delivery.Truck;
 import exception.InvalidItemException;
+import exception.StockException;
 import stock.Item;
 import stock.ItemStock;
 import stock.PerishableItem;
@@ -24,6 +30,7 @@ import stock.Stock;
 import supermart.Reader;
 import supermart.Store;
 import supermart.Strings;
+import supermart.Utils;
 
 /**
  * This is the main panel. All of the other panels go inside this panel.
@@ -38,16 +45,22 @@ public class MainPanel extends JPanel {
 	private SpringLayout layout;
 	
 	private static Store store = null;
-	private static Stock inventory = null;
+	//private Stock inventory = null;
+	private Object[][] inventory = null;
+	Stock itemProperties = null;
+	private Manifest manifest = null; 
 	
 	JLabel lblName, lblCapital;
-	JButton btnStoreInfo, btnInventory, btnManifest, btnSalesLog;
+	JButton btnStoreInfo, btnInventory, btnManifest, btnSalesLog,
+			btnPopulateInventory;
 	
 	String status = "";
 	JTextArea txtStatus;
 	
 	JScrollPane spInventory = null;
 	JTable tblInventory = null;
+	DefaultTableModel tableModel = null;
+	String[] headings = {"Name", "Quantity", "Manufacturing Cost ($)", "Sell Price ($)", "Reorder Point", "Reorder Amount", "Temperature"};
 	
 	public MainPanel() {
 		layout = new SpringLayout();
@@ -64,7 +77,7 @@ public class MainPanel extends JPanel {
 		}
 		
 		try {
-			LoadInventory(Strings.ITEM_PROPERTIES_CSV);
+			LoadEmptyInventory(Strings.ITEM_PROPERTIES_CSV);
 			status += "Inventory loaded into memory.\r\n";
 		} catch (IOException ioe) {
 			status += "Unable to load the inventory.\r\n";
@@ -79,6 +92,9 @@ public class MainPanel extends JPanel {
 		
 		// This is the default display when the programme is loaded.
 		DisplayStoreInformation();
+		
+		PopulateInventory();
+		
 		txtStatus.append("GUI loaded.\r\nDisplaying store information.\r\n");
 	}
 	
@@ -88,8 +104,84 @@ public class MainPanel extends JPanel {
 		store.setCapital(Double.parseDouble(info[1]));
 	}
 	
-	private void LoadInventory(String file) throws IOException, InvalidItemException {
-		inventory = Reader.ReadItemPropertiesFromCSV(file);
+	private void LoadEmptyInventory(String file) throws IOException, InvalidItemException {
+		itemProperties = Reader.ReadItemPropertiesFromCSV(file);
+		inventory = new Object[itemProperties.size()][7];
+
+		for (int i = 0; i < itemProperties.size(); i++) {
+			Item item = itemProperties.get(i).getItem();
+			inventory[i][0] = item.getName();
+			inventory[i][1] = itemProperties.get(i).getQuantity();
+			inventory[i][2] = item.getManufacturingCost();
+			inventory[i][3] = item.getSellPrice();
+			inventory[i][4] = item.getReorderPoint();
+			inventory[i][5] = item.getReorderAmount();
+			
+			if (item.getClass() == PerishableItem.class)
+				inventory[i][6] = ((PerishableItem)item).getTemperature();
+		}
+	}
+	
+	private void LoadManifest(String file) throws IOException, NumberFormatException, InvalidItemException, StockException {
+		manifest = Reader.ReadManifestFromCSV(file);
+		
+		// For each truck in the manifest
+		for (Truck t : manifest) {
+			// For each Item, quantity pair (ItemStock) in the cargo.
+			for (ItemStock truckItemStock : t.getCargo()) {
+				if (itemProperties.containsItem(truckItemStock.getItem().getName()))
+					truckItemStock.getItem().setManufacturingCost(itemProperties.getItemStock(truckItemStock.getItem().getName()).getItem().getManufacturingCost());
+			}
+		}
+		
+		DecreaseCapital();
+	}
+	
+	/**
+	 * Populates the inventory with the information from the manifest file.
+	 * The pre-condition of this is that the item properties have been loaded and the manifest has been loaded into memory.
+	 */
+	private void PopulateInventory() {
+		// Loop through the inventory
+		for (int i = 0; i < inventory.length; i++) {
+			String itemName = (String)inventory[i][0];
+			Item truckItem = null;
+			
+			// For each truck in the manifest
+			for (Truck t : manifest) {
+				// For each Item, quantity pair (ItemStock) in the cargo.
+				for (ItemStock truckItemStock : t.getCargo()) {
+					truckItem = truckItemStock.getItem();
+					
+					if (itemName.equals(truckItem.getName())) {
+						inventory[i][1] = (int)inventory[i][1] + truckItemStock.getQuantity();
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * ...
+	 * The pre-condition of this is that the item properties have been loaded and the manifest has been loaded into memory.
+	 */
+	private void DecreaseCapital() {
+		Item truckItem = null;
+		double cost = 0;
+		
+		// For each truck in the manifest
+		for (Truck t : manifest) {
+			// For each Item, quantity pair (ItemStock) in the cargo.
+			for (ItemStock truckItemStock : t.getCargo()) {
+				truckItem = truckItemStock.getItem();
+
+				// Increase the cost based on how large the quantity is.
+				cost += truckItem.getManufacturingCost() * truckItemStock.getQuantity();
+			}
+		}
+		
+		// Subtract cost from capital
+		store.setCapital(store.getCapital()-cost);
 	}
 	
 	private void InitialiseButtons() {
@@ -135,35 +227,80 @@ public class MainPanel extends JPanel {
 			}
 		});
 		
+		//
+		// Inventory-specific buttons
+		//
+		btnPopulateInventory = Components.CreateButton(this, layout, "Populate inventory", 150, 0);
+		layout.putConstraint(SpringLayout.NORTH, btnPopulateInventory, 10, SpringLayout.SOUTH, spInventory);
+		btnPopulateInventory.setVisible(false);
+		btnPopulateInventory.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Choose a manifest file
+				JFileChooser chooser = new JFileChooser("");
+				chooser.setDialogTitle("Choose a Manifest File");
+				int result = chooser.showOpenDialog(MainPanel.this);
+				
+				// If the user chooses the file
+				if (result == JFileChooser.APPROVE_OPTION) {
+					// Attempt to load the manifest into memory.
+					try {
+						LoadManifest(chooser.getSelectedFile().getAbsolutePath());
+						
+						txtStatus.append("Populated inventory with the specified manifest.\r\n");
+						txtStatus.append(String.format("Subtracted item costs from capital. Store capital is now %s\r\n", Utils.FormatDollars(store.getCapital())));
+						
+					} catch (NumberFormatException e1) {
+						txtStatus.append("One or more of the quantities of the manifest file are invalid.\r\n");
+					} catch (IOException e1) {
+						txtStatus.append("There was an issue attempting to load the specified file.\r\n");
+					} catch (InvalidItemException e1) {
+						txtStatus.append("One or more of the items are invalid.\r\n");
+					} catch (StockException e1) {
+						txtStatus.append("There was an issue attempting to load the stock of a truck.\r\n");
+					}
+					
+					PopulateInventory();
+					DisplayInventory();
+				}
+			}
+		});
+		//
+		
 		// Add the components to this JPanel
-		Components.addComponents(this, btnStoreInfo, btnInventory, btnManifest, btnSalesLog);
+		Components.addComponents(this, btnStoreInfo, btnInventory, btnManifest, btnSalesLog, btnPopulateInventory);
 	}
 	
-	private void InitialiseTables() {
-		String[] headings = {"Name", "Quantity", "Manufacturing Cost ($)", "Sell Price ($)", "Reorder Point", "Reorder Amount", "Temperature"};
-		
-		String[][] inventoryArray = new String[inventory.size()][7];
-		
-		for (int i = 0; i < inventory.size(); i++) {
-			ItemStock is = inventory.get(i);
-			Item item = is.getItem();
-			int quantity = is.getQuantity();
-			
-			inventoryArray[i][0] = item.getName();
-			inventoryArray[i][1] = Integer.toString(quantity);
-			inventoryArray[i][2] = Double.toString( item.getManufacturingCost() );
-			inventoryArray[i][3] = Double.toString( item.getSellPrice() );
-			inventoryArray[i][4] = Integer.toString( item.getReorderPoint() );
-			inventoryArray[i][5] = Integer.toString( item.getReorderAmount() );
-			
-			if (item.getClass() == PerishableItem.class)
-				inventoryArray[i][6] = Double.toString( ((PerishableItem)item).getTemperature() );
-		}
-		
-		tblInventory = new JTable(inventoryArray, headings);
+	private void InitialiseInventoryTable() {
+		tableModel = new DefaultTableModel(inventory, headings);
+		tblInventory = new JTable(tableModel);
 		
 		spInventory = new JScrollPane(tblInventory);
 		spInventory.setVisible(false);
+
+		// Attempt to load the manifest into memory.
+		try {
+			LoadManifest("manifest.csv");
+			
+			status += "Populated inventory with the default manifest.\r\n";
+			status += String.format("Subtracted item costs from capital. Store capital is now %s\r\n", Utils.FormatDollars(store.getCapital()));
+			
+		} catch (NumberFormatException e1) {
+			status += "One or more of the quantities of the manifest file are invalid.\r\n";
+		} catch (IOException e1) {
+			status += "There was an issue attempting to load the default manifest file.\r\n";
+		} catch (InvalidItemException e1) {
+			status += "One or more of the items are invalid.\r\n";
+		} catch (StockException e1) {
+			status += "There was an issue attempting to load the stock of a truck.\r\n";
+		}
+	}
+	
+	private void InitialiseTables() {
+		//
+		// Inventory table
+		//
+		InitialiseInventoryTable();
 		
 		layout.putConstraint(SpringLayout.NORTH, spInventory, 10, SpringLayout.NORTH, this);
 		layout.putConstraint(SpringLayout.WEST, spInventory, 150, SpringLayout.WEST, this);
@@ -171,6 +308,10 @@ public class MainPanel extends JPanel {
 		layout.putConstraint(SpringLayout.SOUTH, spInventory, -150, SpringLayout.SOUTH, this);
 		
 		add(spInventory);
+		
+		//
+		// TODO
+		//
 	}
 	
 	private void InitialiseLabels() {
@@ -201,7 +342,7 @@ public class MainPanel extends JPanel {
 			public void changedUpdate(DocumentEvent e) {}
 		});
 		
-		layout.putConstraint(SpringLayout.NORTH, spStatus, 10, SpringLayout.SOUTH, spInventory);
+		layout.putConstraint(SpringLayout.NORTH, spStatus, 45, SpringLayout.SOUTH, spInventory);
 		layout.putConstraint(SpringLayout.WEST, spStatus, 0, SpringLayout.WEST, spInventory);
 		layout.putConstraint(SpringLayout.SOUTH, spStatus, -10, SpringLayout.SOUTH, this);
 		layout.putConstraint(SpringLayout.EAST, spStatus, -10, SpringLayout.EAST, this);
@@ -219,7 +360,7 @@ public class MainPanel extends JPanel {
 	
 	private void DisplayStoreInformation() {
 		lblName.setText(String.format("Store name: %s", store.getName()));
-		String capital = FormatDollars(store.getCapital());
+		String capital = Utils.FormatDollars(store.getCapital());
 		lblCapital.setText(String.format("Store capital: %s", capital));
 
 		lblName.setVisible(true);
@@ -232,29 +373,15 @@ public class MainPanel extends JPanel {
 	}
 	
 	private void DisplayInventory() {	
+		tableModel = new DefaultTableModel(inventory, headings);
+		tblInventory.setModel(tableModel);
+		
 		spInventory.setVisible(true);
+		btnPopulateInventory.setVisible(true);
 	}
 	
 	private void HideInventory() {
 		spInventory.setVisible(false);
-	}
-	
-	private String FormatDollars(double dollars) {
-		// Only using two decimal places to match the requirements.
-		String strDollars = String.format("%.02f", dollars);
-		
-		// Loop through every 3rd digit (right to left), inserting a comma.
-		// Loop starts at the first spot where a comma will be necessary.
-		for (int i = strDollars.length()-6; i > 0; i-= 3) {
-			// Split the string in two
-			String leftPartition = strDollars.substring(0,i);
-			String rightPartition = strDollars.substring(i, strDollars.length());
-			
-			// re-combine the strings, but with a comma in between.
-			strDollars = String.format("%s,%s", leftPartition, rightPartition);
-		}
-		
-		strDollars = "$" + strDollars;
-		return strDollars;
+		btnPopulateInventory.setVisible(false);
 	}
 }

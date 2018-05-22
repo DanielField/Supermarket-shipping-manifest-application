@@ -25,6 +25,14 @@ public class OrdinaryItem extends Item {
 		reorderPoint = 0;
 	}
 	
+	public OrdinaryItem(String name) {
+		this.name = name;
+		manufacturingCost = 0;
+		sellPrice = 0;
+		reorderAmount = 0;
+		reorderPoint = 0;
+	}
+	
 	/**
 	 * @param name
 	 * @param manufacturingCost
