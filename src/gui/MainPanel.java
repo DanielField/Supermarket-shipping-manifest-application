@@ -59,7 +59,7 @@ public class MainPanel extends JPanel {
 	
 	JScrollPane spInventory = null;
 	JTable tblInventory = null;
-	DefaultTableModel tableModel = null;
+	DefaultTableModel tblInventoryModel = null;
 	String[] headings = {"Name", "Quantity", "Manufacturing Cost ($)", "Sell Price ($)", "Reorder Point", "Reorder Amount", "Temperature"};
 	
 	public MainPanel() {
@@ -272,8 +272,8 @@ public class MainPanel extends JPanel {
 	}
 	
 	private void InitialiseInventoryTable() {
-		tableModel = new DefaultTableModel(inventory, headings);
-		tblInventory = new JTable(tableModel);
+		tblInventoryModel = new DefaultTableModel(inventory, headings);
+		tblInventory = new JTable(tblInventoryModel);
 		
 		spInventory = new JScrollPane(tblInventory);
 		spInventory.setVisible(false);
@@ -373,8 +373,8 @@ public class MainPanel extends JPanel {
 	}
 	
 	private void DisplayInventory() {	
-		tableModel = new DefaultTableModel(inventory, headings);
-		tblInventory.setModel(tableModel);
+		tblInventoryModel = new DefaultTableModel(inventory, headings);
+		tblInventory.setModel(tblInventoryModel);
 		
 		spInventory.setVisible(true);
 		btnPopulateInventory.setVisible(true);
