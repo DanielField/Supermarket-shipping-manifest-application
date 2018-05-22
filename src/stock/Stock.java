@@ -181,7 +181,7 @@ public class Stock extends ArrayList<ItemStock> {
 	 */
 	public ItemStock getItemStock(String name) throws InvalidItemException {
 		for (ItemStock itemStock : stock) {
-			if (itemStock.getItem().getName() == name) {
+			if (itemStock.getItem().getName().toLowerCase().equals(name.toLowerCase())) {
 				return itemStock;
 			}
 		}
@@ -221,6 +221,21 @@ public class Stock extends ArrayList<ItemStock> {
 	public boolean containsItem(Item i) {
 		for (ItemStock is : stock) {
 			if (is.getItem() == i)
+				return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * Check whether an item is in the stock collection. 
+	 * This ignores quantity, so it will return true even if the quantity is zero.
+	 * 
+	 * @param name Item name for which to search.
+	 * @return Returns a boolean value.
+	 */
+	public boolean containsItem(String name) {
+		for (ItemStock is : stock) {
+			if (is.getItem().getName().toLowerCase().equals(name.toLowerCase()))
 				return true;
 		}
 		return false;

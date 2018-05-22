@@ -30,6 +30,18 @@ public class PerishableItem extends Item {
 	}
 	
 	/**
+	 * 
+	 */
+	public PerishableItem(String name) {
+		this.name = name;
+		manufacturingCost = 0;
+		sellPrice = 0;
+		reorderAmount = 0;
+		reorderPoint = 0;
+		temperature = 0;
+	}
+	
+	/**
 	 * @param name
 	 * @param manufacturingCost
 	 * @param sellPrice

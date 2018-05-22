@@ -130,14 +130,4 @@ public class Supermart {
 		
 		frm.setJMenuBar(menuBar);
 	}
-	
-	/**
-	 * Useful method for displaying a pop-up error message.
-	 * 
-	 * @param parent Determines the frame in which the dialog is displayed.
-	 * @param message Text to be displayed.
-	 */
-	public static void DisplayErrorMessage(Component parent, String message) {
-		JOptionPane.showMessageDialog(parent, message, "Application Error", JOptionPane.ERROR_MESSAGE);
-	}
 }
