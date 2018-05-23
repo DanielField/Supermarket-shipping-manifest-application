@@ -49,4 +49,14 @@ public class Utils {
 	public static void DisplayErrorMessage(Component parent, String message) {
 		JOptionPane.showMessageDialog(parent, message, "Application Error", JOptionPane.ERROR_MESSAGE);
 	}
+	
+	/**
+	 * Useful method for displaying a general pop-up message.
+	 * 
+	 * @param parent Determines the frame in which the dialog is displayed.
+	 * @param message Text to be displayed.
+	 */
+	public static void DisplayMessage(Component parent, String message, String caption) {
+		JOptionPane.showMessageDialog(parent, message, caption, JOptionPane.INFORMATION_MESSAGE);
+	}
 }

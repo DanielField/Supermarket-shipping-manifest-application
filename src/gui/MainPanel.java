@@ -20,17 +20,21 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import delivery.Manifest;
+import delivery.OrdinaryTruck;
+import delivery.RefrigeratedTruck;
 import delivery.Truck;
 import exception.InvalidItemException;
 import exception.StockException;
 import stock.Item;
 import stock.ItemStock;
+import stock.OrdinaryItem;
 import stock.PerishableItem;
 import stock.Stock;
 import supermart.Reader;
 import supermart.Store;
 import supermart.Strings;
 import supermart.Utils;
+import supermart.Writer;
 
 /**
  * This is the main panel. All of the other panels go inside this panel.
@@ -51,8 +55,7 @@ public class MainPanel extends JPanel {
 	private Manifest manifest = null; 
 	
 	JLabel lblName, lblCapital;
-	JButton btnStoreInfo, btnInventory, btnManifest, btnSalesLog,
-			btnPopulateInventory;
+	JButton btnStoreInfo, btnInventory, btnExportManifest, btnSalesLog, btnImportManifest;
 	
 	String status = "";
 	JTextArea txtStatus;
@@ -92,6 +95,16 @@ public class MainPanel extends JPanel {
 		
 		// This is the default display when the programme is loaded.
 		DisplayStoreInformation();
+		
+		try {
+			ExportManifest();
+		} catch (IOException e) {
+			status += "Unable to export the manifest to the specified file.\r\n";
+		} catch (InvalidItemException e) {
+			status += "There was an issue with one or more of the items.\r\n";
+		} catch (StockException e) {
+			status += "There was an issue regarding the cargo of one or more trucks.\r\n";
+		}
 		
 		PopulateInventory();
 		
@@ -162,6 +175,94 @@ public class MainPanel extends JPanel {
 	}
 	
 	/**
+	 * @return
+	 * @throws InvalidItemException
+	 * @throws StockException
+	 */
+	private Manifest ConstructManifestFromInventory() throws InvalidItemException, StockException {
+		Manifest m = new Manifest();
+		Truck ordinaryTruck = new OrdinaryTruck();
+		Truck refrigeratedTruck = new RefrigeratedTruck();
+		
+		for (Object[] row : inventory) {
+			// If the item is not perishable
+			if (row[6] == null) {		
+				// If the cargo plus the quantity being added is less than the maximum capacity
+				if (ordinaryTruck.getTotalCargo() + (int)row[1] <= ordinaryTruck.getCapacity()) {
+					// If the quantity is less than the reorder point, add the reorder amount to cargo
+					if ((int)row[1] <= (int)row[4]) {
+						Item item = new OrdinaryItem((String)row[0]);
+						ordinaryTruck.addToCargo(item, (int)row[5]);
+					}
+				} else {
+					// Create a new truck to fit the item that didn't fit.
+					
+					m.add(ordinaryTruck);
+					ordinaryTruck = new OrdinaryTruck();
+					
+					// If the quantity is less than the reorder point, add the reorder amount to cargo
+					if ((int)row[1] <= (int)row[4]) {
+						Item item = new OrdinaryItem((String)row[0]);
+						ordinaryTruck.addToCargo(item, (int)row[5]);
+					}
+				}
+			} else {		
+				// If the cargo plus the quantity being added is less than the maximum capacity
+				if (refrigeratedTruck.getTotalCargo() + (int)row[1] < refrigeratedTruck.getCapacity()) {
+					// If the quantity is less than the reorder point, add the reorder amount to cargo
+					if ((int)row[1] <= (int)row[4]) {
+						Item item = new PerishableItem((String)row[0]);
+						refrigeratedTruck.addToCargo(item, (int)row[5]);
+					}
+				} else {
+					// Create a new truck to fit the item that didn't fit.
+					
+					m.add(refrigeratedTruck);
+					refrigeratedTruck = new RefrigeratedTruck();
+					
+					// If the quantity is less than the reorder point, add the reorder amount to cargo
+					if ((int)row[1] <= (int)row[4]) {
+						Item item = new PerishableItem((String)row[0]);
+						refrigeratedTruck.addToCargo(item, (int)row[5]);
+					}
+				}
+			}
+		}
+		
+		if (ordinaryTruck.getTotalCargo() > 0)
+			m.add(ordinaryTruck);
+		if (refrigeratedTruck.getTotalCargo() > 0)
+			m.add(refrigeratedTruck);
+		
+		return m;
+	}
+	
+	/**
+	 * Export a manifest based on the current inventory. This will automatically put the file in the application directory.
+	 * 
+	 * @throws IOException Throws if there is an error attempting to write the file
+	 * @throws StockException Throws if there is an error relating to Stock
+	 * @throws InvalidItemException Throws if there is an invalid item
+	 */
+	private void ExportManifest() throws IOException, InvalidItemException, StockException {
+		Manifest m = ConstructManifestFromInventory();
+		Writer.WriteManifestToCSV(Strings.MANIFEST_CSV, m);
+	}
+	
+	/**
+	 * Export a manifest based on the current inventory.
+	 * 
+	 * @param file The file to which the manifest is written.
+	 * @throws IOException Throws if there is an error attempting to write the file
+	 * @throws StockException Throws if there is an error relating to Stock
+	 * @throws InvalidItemException Throws if there is an invalid item
+	 */
+	private void ExportManifest(String file) throws IOException, InvalidItemException, StockException {
+		Manifest m = ConstructManifestFromInventory();
+		Writer.WriteManifestToCSV(file, m);
+	}
+	
+	/**
 	 * ...
 	 * The pre-condition of this is that the item properties have been loaded and the manifest has been loaded into memory.
 	 */
@@ -207,16 +308,6 @@ public class MainPanel extends JPanel {
 			}
 		});
 		
-		btnManifest = Components.CreateButton(this, layout, "Manifest", 10, 70);
-		layout.putConstraint(SpringLayout.EAST, btnManifest, -10, SpringLayout.WEST, spInventory);
-		btnManifest.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ClearScreen();
-				txtStatus.append("Displaying truck manifest.\r\n");
-			}
-		});
-		
 		btnSalesLog = Components.CreateButton(this, layout, "Sales Log", 10, 100);
 		layout.putConstraint(SpringLayout.EAST, btnSalesLog, -10, SpringLayout.WEST, spInventory);
 		btnSalesLog.addActionListener(new ActionListener() {
@@ -230,14 +321,16 @@ public class MainPanel extends JPanel {
 		//
 		// Inventory-specific buttons
 		//
-		btnPopulateInventory = Components.CreateButton(this, layout, "Populate inventory", 150, 0);
-		layout.putConstraint(SpringLayout.NORTH, btnPopulateInventory, 10, SpringLayout.SOUTH, spInventory);
-		btnPopulateInventory.setVisible(false);
-		btnPopulateInventory.addActionListener(new ActionListener() {
+		btnImportManifest = Components.CreateButton(this, layout, "Import manifest", 150, 0);
+		layout.putConstraint(SpringLayout.NORTH, btnImportManifest, 10, SpringLayout.SOUTH, spInventory);
+		btnImportManifest.setVisible(false);
+		btnImportManifest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				Utils.DisplayMessage(MainPanel.this, "This will add to the currently loaded quantities. Use this only if you'd like an additional manifest file loaded.", "Important Note");
+				
 				// Choose a manifest file
-				JFileChooser chooser = new JFileChooser("");
+				JFileChooser chooser = new JFileChooser();
 				chooser.setDialogTitle("Choose a Manifest File");
 				int result = chooser.showOpenDialog(MainPanel.this);
 				
@@ -262,18 +355,58 @@ public class MainPanel extends JPanel {
 					
 					PopulateInventory();
 					DisplayInventory();
+				} else {
+					txtStatus.append("Import cancelled.\r\n");
 				}
 			}
 		});
-		//
+		
+		btnExportManifest = Components.CreateButton(this, layout, "Export manifest", 150, 0);
+		layout.putConstraint(SpringLayout.WEST, btnExportManifest, 10, SpringLayout.EAST, btnImportManifest);
+		layout.putConstraint(SpringLayout.NORTH, btnExportManifest, 10, SpringLayout.SOUTH, spInventory);
+		btnExportManifest.setVisible(false);
+		btnExportManifest.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Create a manifest file at the specified location
+				JFileChooser chooser = new JFileChooser();
+				chooser.setDialogTitle("Export New Manifest");
+				int result = chooser.showSaveDialog(MainPanel.this);
+	
+				if (result == JFileChooser.APPROVE_OPTION) {
+					
+					try {
+						ExportManifest(chooser.getSelectedFile().getAbsolutePath());
+						txtStatus.append("Exported manifest based on current inventory.\r\n");
+					} catch (IOException ex) {
+						txtStatus.append("Unable to export the manifest to the specified file.\r\n");
+					} catch (InvalidItemException ex) {
+						txtStatus.append("There was an issue with one or more of the items.\r\n");
+					} catch (StockException ex) {
+						txtStatus.append("There was an issue regarding the cargo of one or more trucks.\r\n");
+					}
+					
+				} else {
+					txtStatus.append("Export cancelled.\r\n");
+				}
+			}
+		});
 		
 		// Add the components to this JPanel
-		Components.addComponents(this, btnStoreInfo, btnInventory, btnManifest, btnSalesLog, btnPopulateInventory);
+		Components.addComponents(this, btnStoreInfo, btnInventory, btnExportManifest, btnSalesLog, btnImportManifest);
 	}
 	
 	private void InitialiseInventoryTable() {
 		tblInventoryModel = new DefaultTableModel(inventory, headings);
-		tblInventory = new JTable(tblInventoryModel);
+		tblInventory = new JTable(tblInventoryModel) {
+			private static final long serialVersionUID = 1L;
+			
+			// Disable user editing.
+			@Override
+			public boolean isCellEditable(int row, int column) {                
+                return false;               
+        };
+		};
 		
 		spInventory = new JScrollPane(tblInventory);
 		spInventory.setVisible(false);
@@ -377,11 +510,13 @@ public class MainPanel extends JPanel {
 		tblInventory.setModel(tblInventoryModel);
 		
 		spInventory.setVisible(true);
-		btnPopulateInventory.setVisible(true);
+		btnImportManifest.setVisible(true);
+		btnExportManifest.setVisible(true);
 	}
 	
 	private void HideInventory() {
 		spInventory.setVisible(false);
-		btnPopulateInventory.setVisible(false);
+		btnImportManifest.setVisible(false);
+		btnExportManifest.setVisible(false);
 	}
 }
