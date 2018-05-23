@@ -1,6 +1,5 @@
 package supermart;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -9,7 +8,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import delivery.Manifest;
@@ -30,8 +28,6 @@ import stock.Stock;
  * @author Allen Basic
  */
 public class Supermart {
-
-	public static final String APP_NAME = "Supermart";
 	public static final int DEFAULT_W = 640, DEFAULT_H = 480;
 	
 	/**
@@ -95,7 +91,7 @@ public class Supermart {
 				
 				frame.setVisible(true);
 				frame.setResizable(true);
-				frame.setTitle(APP_NAME);
+				frame.setTitle("SuperMart - Store Information");
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 				
 				// Centre the window.
