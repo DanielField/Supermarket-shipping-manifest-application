@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -31,6 +32,8 @@ import stock.OrdinaryItem;
 import stock.PerishableItem;
 import stock.Stock;
 import supermart.Reader;
+import supermart.Sale;
+import supermart.SaleList;
 import supermart.Store;
 import supermart.Strings;
 import supermart.Utils;
@@ -55,7 +58,7 @@ public class MainPanel extends JPanel {
 	private Manifest manifest = null; 
 	
 	JLabel lblName, lblCapital;
-	JButton btnStoreInfo, btnInventory, btnExportManifest, btnSalesLog, btnImportManifest;
+	JButton btnStoreInfo, btnInventory, btnExportManifest, btnImportSalesLog, btnImportManifest;
 	
 	String status = "";
 	JTextArea txtStatus;
@@ -89,7 +92,7 @@ public class MainPanel extends JPanel {
 		}
 
 		InitialiseLabels();
-		InitialiseTables();
+		InitialiseTable();
 		InitialiseButtons();
 		InitialiseStatusField();
 		
@@ -293,7 +296,9 @@ public class MainPanel extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				ClearScreen();
 				DisplayStoreInformation();
+				
 				txtStatus.append("Displaying store information.\r\n");
+				((JFrame)getTopLevelAncestor()).setTitle("SuperMart - Store Information");
 			}
 		});
 		
@@ -305,16 +310,6 @@ public class MainPanel extends JPanel {
 				ClearScreen();
 				DisplayInventory();
 				txtStatus.append("Displaying store inventory.\r\n");
-			}
-		});
-		
-		btnSalesLog = Components.CreateButton(this, layout, "Sales Log", 10, 100);
-		layout.putConstraint(SpringLayout.EAST, btnSalesLog, -10, SpringLayout.WEST, spInventory);
-		btnSalesLog.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ClearScreen();
-				txtStatus.append("Displaying store sales logs.\r\n");
 			}
 		});
 		
@@ -392,11 +387,59 @@ public class MainPanel extends JPanel {
 			}
 		});
 		
+
+		btnImportSalesLog = Components.CreateButton(this, layout, "Import sales log", 10, 100);
+		layout.putConstraint(SpringLayout.WEST, btnImportSalesLog, 10, SpringLayout.EAST, btnExportManifest);
+		layout.putConstraint(SpringLayout.NORTH, btnImportSalesLog, 10, SpringLayout.SOUTH, spInventory);
+		btnImportSalesLog.setVisible(false);
+		btnImportSalesLog.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// Create a manifest file at the specified location
+				JFileChooser chooser = new JFileChooser();
+				chooser.setDialogTitle("Import sales log");
+				int result = chooser.showOpenDialog(MainPanel.this);
+	
+				if (result == JFileChooser.APPROVE_OPTION) {
+					try {
+						SaleList saleList = Reader.ReadSalesFromCSV(chooser.getSelectedFile().getAbsolutePath());
+						
+						for (Sale s : saleList.getList()) {
+							for (int i = 0; i < inventory.length; i++) {
+								String rowItemName = (String) inventory[i][0];
+								
+								if (s.getItemName().equals(rowItemName)) {
+									double sellPrice = itemProperties.getItemStock(s.getItemName()).getItem().getSellPrice();
+									store.setCapital(store.getCapital() + (sellPrice * s.getQuantity()));
+									
+									inventory[i][1] = (int) inventory[i][1] - s.getQuantity(); 
+									
+									break;
+								}
+							}
+						}
+						
+						DisplayInventory();
+						txtStatus.append("Imported store sales logs.\r\n");
+						txtStatus.append("Inventory has been adjusted.\r\n");
+						txtStatus.append(String.format("Added profits from sales log to the store capital. Capital is now %s\r\n", 
+								Utils.FormatDollars(store.getCapital())));
+					} catch (IOException ex) {
+						txtStatus.append("There was an error attempting to read the specified sales log.\r\n");
+					} catch (InvalidItemException ex) {
+						txtStatus.append("One or more items are invalid.\r\n");
+					}
+				} else {
+					txtStatus.append("Import cancelled.\r\n");
+				}
+			}
+		});
+		
 		// Add the components to this JPanel
-		Components.addComponents(this, btnStoreInfo, btnInventory, btnExportManifest, btnSalesLog, btnImportManifest);
+		Components.addComponents(this, btnStoreInfo, btnInventory, btnExportManifest, btnImportSalesLog, btnImportManifest);
 	}
 	
-	private void InitialiseInventoryTable() {
+	private void InitialiseTable() {
 		tblInventoryModel = new DefaultTableModel(inventory, headings);
 		tblInventory = new JTable(tblInventoryModel) {
 			private static final long serialVersionUID = 1L;
@@ -427,13 +470,6 @@ public class MainPanel extends JPanel {
 		} catch (StockException e1) {
 			status += "There was an issue attempting to load the stock of a truck.\r\n";
 		}
-	}
-	
-	private void InitialiseTables() {
-		//
-		// Inventory table
-		//
-		InitialiseInventoryTable();
 		
 		layout.putConstraint(SpringLayout.NORTH, spInventory, 10, SpringLayout.NORTH, this);
 		layout.putConstraint(SpringLayout.WEST, spInventory, 150, SpringLayout.WEST, this);
@@ -441,10 +477,6 @@ public class MainPanel extends JPanel {
 		layout.putConstraint(SpringLayout.SOUTH, spInventory, -150, SpringLayout.SOUTH, this);
 		
 		add(spInventory);
-		
-		//
-		// TODO
-		//
 	}
 	
 	private void InitialiseLabels() {
@@ -498,11 +530,15 @@ public class MainPanel extends JPanel {
 
 		lblName.setVisible(true);
 		lblCapital.setVisible(true);
+		
+		btnStoreInfo.setEnabled(false);
 	}
 	
 	private void HideStoreInformation() {
 		lblName.setVisible(false);
 		lblCapital.setVisible(false);
+		
+		btnStoreInfo.setEnabled(true);
 	}
 	
 	private void DisplayInventory() {	
@@ -512,11 +548,19 @@ public class MainPanel extends JPanel {
 		spInventory.setVisible(true);
 		btnImportManifest.setVisible(true);
 		btnExportManifest.setVisible(true);
+		btnImportSalesLog.setVisible(true);
+		
+		btnInventory.setEnabled(false);
+		
+		((JFrame)getTopLevelAncestor()).setTitle("SuperMart - Inventory");
 	}
 	
 	private void HideInventory() {
 		spInventory.setVisible(false);
 		btnImportManifest.setVisible(false);
 		btnExportManifest.setVisible(false);
+		btnImportSalesLog.setVisible(false);
+		
+		btnInventory.setEnabled(true);
 	}
 }

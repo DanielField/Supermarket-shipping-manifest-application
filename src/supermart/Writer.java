@@ -38,12 +38,15 @@ public class Writer {
 		
 		for (int i = 0; i < manifest.size(); i++) {
 			Truck truck = manifest.get(i);
+			
 			if (truck.getClass() == RefrigeratedTruck.class) {
 				bw.append(">Refrigerated");
 			} else {
 				bw.append(">Ordinary");
 			}
+			
 			bw.newLine();
+			
 			for (ItemStock is : truck.getCargo()) {
 				bw.append(String.format("%s,%d", is.getItem().getName(), is.getQuantity()));
 				bw.newLine();
