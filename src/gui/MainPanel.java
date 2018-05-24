@@ -22,6 +22,7 @@ import delivery.Manifest;
 import delivery.OrdinaryTruck;
 import delivery.RefrigeratedTruck;
 import delivery.Truck;
+import exception.CSVFormatException;
 import exception.InvalidItemException;
 import exception.StockException;
 import stock.Item;
@@ -80,6 +81,8 @@ public class MainPanel extends JPanel {
 		} catch (IOException e) {
 			status += "Unable to load the store information file. Setting the information to default.\\r\\n";
 			
+		} catch (CSVFormatException e) {
+			status += e.getMessage();
 		}
 		
 		try {
@@ -119,8 +122,9 @@ public class MainPanel extends JPanel {
 	 * 
 	 * @param file The store information file.
 	 * @throws IOException Throws if there is an issue reading the file.
+	 * @throws CSVFormatException Throws if there aren't two values. (name and capital)
 	 */
-	private void LoadStoreInformation(String file) throws IOException {
+	private void LoadStoreInformation(String file) throws IOException, CSVFormatException {
 		String[] info = Reader.ReadStoreInfoFromCSV(file);
 		store.setName(info[0]);
 		store.setCapital(Double.parseDouble(info[1]));
@@ -161,8 +165,9 @@ public class MainPanel extends JPanel {
 	 * @throws NumberFormatException Throws when there is an invalid number format.
 	 * @throws InvalidItemException Throws when one of the items is invalid.
 	 * @throws StockException Throws when there is an issue adding an item to the cargo of a truck.
+	 * @throws CSVFormatException Throws if the CSV is formatted incorrectly.
 	 */
-	private void LoadManifest(String file) throws IOException, NumberFormatException, InvalidItemException, StockException {
+	private void LoadManifest(String file) throws IOException, NumberFormatException, InvalidItemException, StockException, CSVFormatException {
 		manifest = Reader.ReadManifestFromCSV(file);
 		
 		// For each truck in the manifest
@@ -380,6 +385,8 @@ public class MainPanel extends JPanel {
 						txtStatus.append("One or more of the items are invalid.\r\n");
 					} catch (StockException e1) {
 						txtStatus.append("There was an issue attempting to load the stock of a truck.\r\n");
+					} catch (CSVFormatException e1) {
+						txtStatus.append("The CSV specified is not formatted correctly.\r\n");
 					}
 					
 					PopulateInventory();
@@ -505,6 +512,8 @@ public class MainPanel extends JPanel {
 			status += "One or more of the items are invalid.\r\n";
 		} catch (StockException e1) {
 			status += "There was an issue attempting to load the stock of a truck.\r\n";
+		} catch (CSVFormatException e1) {
+			status += "The CSV specified is not formatted correctly.\r\n";
 		}
 		
 		layout.putConstraint(SpringLayout.NORTH, spInventory, 10, SpringLayout.NORTH, this);
