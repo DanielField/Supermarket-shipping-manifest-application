@@ -11,6 +11,7 @@ import delivery.Manifest;
 import delivery.OrdinaryTruck;
 import delivery.RefrigeratedTruck;
 import delivery.Truck;
+import exception.CSVFormatException;
 import exception.InvalidItemException;
 import exception.StockException;
 import stock.Item;
@@ -19,16 +20,21 @@ import stock.PerishableItem;
 import stock.Stock;
 
 /**
+ * This holds all of the methods for reading from a file.
+ * 
  * @author Daniel Field
- *
+ * @author Allen Basic
  */
 public class Reader {
 	/**
-	 * @param file
-	 * @return
-	 * @throws IOException
+	 * Reads the store information from the specified file.
+	 * 
+	 * @param file The file being read.
+	 * @return The store information. Array element zero is the name, array element one is the capital.
+	 * @throws IOException Throws if there is an issue reading the file.
+	 * @throws CSVFormatException Throws when the store information file contains not enough values or too many values.
 	 */
-	public static String[] ReadStoreInfoFromCSV(String file) throws IOException {
+	public static String[] ReadStoreInfoFromCSV(String file) throws IOException, CSVFormatException {
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		
@@ -37,6 +43,11 @@ public class Reader {
 		
 		if (line != null) {
 			info = line.split(",");
+			
+			if (line.length() != 2) {
+				br.close();
+				throw new CSVFormatException("Expected two values, but got " + line.length());
+			}
 		}
 		
 		br.close();
@@ -44,10 +55,12 @@ public class Reader {
 	}
 	
 	/**
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 * @throws InvalidItemException
+	 * Read the specified item properties file.
+	 * 
+	 * @param file The item properties file.
+	 * @return Stock object representing every item in the file.
+	 * @throws IOException Throws if there is an error reading the file.
+	 * @throws InvalidItemException Throws if there is an invalid item in the file.
 	 */
 	public static Stock ReadItemPropertiesFromCSV(String file) throws IOException, InvalidItemException {
 		FileReader fr = new FileReader(file);
@@ -91,9 +104,11 @@ public class Reader {
 	}
 	
 	/**
-	 * @param file
-	 * @return
-	 * @throws IOException
+	 * Reads a sales log from the specified file.
+	 * 
+	 * @param file The sales log file.
+	 * @return SaleList containing the data from the sales log.
+	 * @throws IOException Throws if there is an error reading the file.
 	 */
 	public static SaleList ReadSalesFromCSV(String file) throws IOException {
 		FileReader fr = new FileReader(file);
@@ -119,15 +134,17 @@ public class Reader {
 	}
 	
 	/**
+	 * Reads the manifest from the specified file.
 	 * 
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 * @throws NumberFormatException
-	 * @throws InvalidItemException
-	 * @throws StockException
+	 * @param file The manifest file.
+	 * @return Manifest object representing all of the trucks and their cargo.
+	 * @throws IOException Throws if there is an error reading from the file.
+	 * @throws NumberFormatException Throws if a number is formated incorrectly.
+	 * @throws InvalidItemException Throws if there is an invalid item in the file.
+	 * @throws StockException Throws if there is an issue adding cargo to the truck.
+	 * @throws CSVFormatException Throws if the CSV is formatted incorrectly.
 	 */
-	public static Manifest ReadManifestFromCSV(String file) throws IOException, NumberFormatException, InvalidItemException, StockException {
+	public static Manifest ReadManifestFromCSV(String file) throws IOException, NumberFormatException, InvalidItemException, StockException, CSVFormatException {
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		
@@ -159,6 +176,10 @@ public class Reader {
 					}
 				}
 				manifest.add(truck);
+			} else {
+				// The CSV has items that do not belong to any trucks.
+				br.close();
+				throw new CSVFormatException("The CSV has items that do not belong to any trucks.");
 			}
 		}
 		

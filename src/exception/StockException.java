@@ -4,13 +4,16 @@
 package exception;
 
 /**
+ * Occurs when there is an issue regarding the Stock class.
+ * 
  * @author Daniel Field
  *
  */
 public class StockException extends Exception {
+	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * Construct a stock exception
 	 */
 	public StockException() {
 		// TODO Auto-generated constructor stub

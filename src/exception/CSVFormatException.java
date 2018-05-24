@@ -8,6 +8,7 @@ package exception;
  *
  */
 public class CSVFormatException extends Exception {
+	private static final long serialVersionUID = 1L;
 
 	/**
 	 * 
