@@ -1,5 +1,7 @@
 package stock;
 
+import java.util.ArrayList;
+
 /**
  * Store a single item along with it's ID and quantity.
  * 
@@ -72,5 +74,34 @@ public class ItemStock {
 	 */
 	public void setQuantity(int quantity) {
 		this.quantity = quantity;
+	}
+	
+	/**
+	 * Check whether the specified item ID is already in use.
+	 * 
+	 * @param id Specified ID.
+	 * @param stock The stock to searth through.
+	 * @return True if the ID is taken, else false.
+	 */
+	public static boolean IDTaken(int id, ArrayList<ItemStock> stock) {
+		for (ItemStock itemStock : stock)
+			if (itemStock.getItemID() == id) return true;
+		return false;
+	}
+	
+	/**
+	 * Randomly generate a unique item ID.
+	 * 
+	 * @param stock The stock to search through to determine that the ID is unique.
+	 * @return Unique item ID.
+	 */
+	public static int generateID(ArrayList<ItemStock> stock) {
+		int id;
+		do {
+			id = (int) (Math.random() * 100000);
+		}
+		while(IDTaken(id, stock) == true);
+		
+		return id;
 	}
 }
