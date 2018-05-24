@@ -5,10 +5,10 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import Delivery.Manifest;
-import Delivery.OrdinaryTruck;
-import Delivery.RefrigeratedTruck;
-import Delivery.Truck;
+import delivery.Manifest;
+import delivery.OrdinaryTruck;
+import delivery.RefrigeratedTruck;
+import delivery.Truck;
 
 /**
  * @author Allen Basic

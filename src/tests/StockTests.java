@@ -8,11 +8,12 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import Exception.InvalidItemException;
-import Exception.StockException;
-import Stock.Item;
-import Stock.ItemStock;
-import Stock.Stock;
+import exception.InvalidItemException;
+import exception.StockException;
+import stock.Item;
+import stock.ItemStock;
+import stock.OrdinaryItem;
+import stock.Stock;
 
 /**
  * Test cases for the Stock collection.
@@ -37,10 +38,10 @@ public class StockTests {
 	 * @throws InvalidItemException 
 	 */
 	@Test
-	public void testAdd() throws InvalidItemException {
+	public void testAddOrdinary() throws InvalidItemException {
 		assertEquals(0, stock.stockTotal());
 		
-		Item apple = new Item(null, 0, 0, 0, 0);
+		Item apple = new OrdinaryItem(null, 0, 0, 0, 0);
 		stock.addNewItem(apple, 300);
 		
 		assertEquals(300, stock.stockTotal());
@@ -52,8 +53,8 @@ public class StockTests {
 	 * @throws InvalidItemException 
 	 */
 	@Test(expected = InvalidItemException.class)
-	public void testAddTwoOfTheSameItem() throws InvalidItemException {
-		Item apple = new Item(null, 0, 0, 0, 0);
+	public void testAddTwoOfTheSameOrdinaryItem() throws InvalidItemException {
+		Item apple = new OrdinaryItem(null, 0, 0, 0, 0);
 		stock.addNewItem(apple, 300);
 		stock.addNewItem(apple, 300);
 	}
@@ -65,8 +66,8 @@ public class StockTests {
 	 * @throws InvalidItemException Throws if the item already exists.
 	 */
 	@Test
-	public void testIncreaseQuantity() throws StockException, InvalidItemException {
-		Item apple = new Item(null, 0, 0, 0, 0);
+	public void testOrdinaryIncreaseQuantity() throws StockException, InvalidItemException {
+		Item apple = new OrdinaryItem(null, 0, 0, 0, 0);
 		ItemStock is = stock.addNewItem(apple, 300);
 		
 		stock.increaseQuantity(is.getItemID(), 20);
@@ -78,8 +79,8 @@ public class StockTests {
 	 * @throws InvalidItemException
 	 */
 	@Test
-	public void testDecreaseQuantity() throws StockException, InvalidItemException {
-		Item apple = new Item(null, 0, 0, 0, 0);
+	public void testOrdinaryDecreaseQuantity() throws StockException, InvalidItemException {
+		Item apple = new OrdinaryItem(null, 0, 0, 0, 0);
 		ItemStock is = stock.addNewItem(apple, 300);
 		
 		stock.decreaseQuantity(is.getItemID(), 200);

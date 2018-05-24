@@ -8,8 +8,10 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import Stock.Item;
-import Exception.InvalidItemException;
+import exception.InvalidItemException;
+import stock.Item;
+import stock.OrdinaryItem;
+import stock.PerishableItem;
 
 /**
  * Test cases for the item class.
@@ -29,23 +31,25 @@ public class ItemTests {
 //		Not all items are temperature controlled, and so they will not
 //		need a temperature.
 
-	public Item item;
+	public Item perishable;
+	public Item ordinary;
 	
 	@Before @Test
 	public void testInitialize() {
-		item = new Item(null, 0, 0, 0, 0, 0);
+		perishable = new PerishableItem(null, 0, 0, 0, 0, 0);
+		ordinary = new OrdinaryItem(null, 0, 0, 0, 0);
 	}
 	
 	@Test
-	public void testName() throws InvalidItemException {
-		item.setName("Chicken");
-		String name = item.getName();
+	public void testPerishableName() throws InvalidItemException {
+		perishable.setName("Chicken");
+		String name = perishable.getName();
 		
 		assertEquals("Chicken", name);
 	}
 	
 	@Test(expected=InvalidItemException.class)
-	public void testNameEmpty() throws InvalidItemException {
-		item.setName("");
+	public void testPerishableNameEmpty() throws InvalidItemException {
+		perishable.setName("");
 	}
 }

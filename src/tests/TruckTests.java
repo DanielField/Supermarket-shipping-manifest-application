@@ -8,13 +8,15 @@ import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
-import Delivery.OrdinaryTruck;
-import Delivery.RefrigeratedTruck;
-import Delivery.Truck;
-import Exception.InvalidItemException;
-import Exception.StockException;
-import Stock.Item;
-import Stock.Stock;
+import delivery.OrdinaryTruck;
+import delivery.RefrigeratedTruck;
+import delivery.Truck;
+import exception.InvalidItemException;
+import exception.StockException;
+import stock.Item;
+import stock.OrdinaryItem;
+import stock.PerishableItem;
+import stock.Stock;
 
 /**
  * @author Allen Basic
@@ -56,10 +58,10 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testAddToCargo() throws InvalidItemException, StockException {
+	public void testAddOrdinaryToCargo() throws InvalidItemException, StockException {
 		Stock cargo = new Stock();
-		Item chicken = new Item(null, 0, 0, 0, 0);
-		Item iceCream = new Item(null, 0, 0, 0, 0);
+		Item chicken = new OrdinaryItem(null, 0, 0, 0, 0);
+		Item iceCream = new OrdinaryItem(null, 0, 0, 0, 0);
 		
 		cargo.addNewItem(chicken, 53);
 		cargo.addNewItem(iceCream, 9);
@@ -71,7 +73,7 @@ public class TruckTests {
 	@Test(expected = InvalidItemException.class)
 	public void testAddInvalidTemperatureItemToCargo() throws InvalidItemException, StockException {
 		Stock cargo = new Stock();
-		Item liquidHelium = new Item("liquid Helium", 0, 0, 0, 0, -290);
+		Item liquidHelium = new PerishableItem("liquid Helium", 0, 0, 0, 0, -290);
 		
 		cargo.addNewItem(liquidHelium, 22);
 		
@@ -79,10 +81,10 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testRemoveFromCargo() throws InvalidItemException, StockException {
-		Item item1 = new Item("item1",0,0,0,0);
+	public void testRemoveOrdinaryFromCargo() throws InvalidItemException, StockException {
+		Item item1 = new OrdinaryItem("item1",0,0,0,0);
 		refrigeratedTruck.addToCargo(item1, 200);
-		Item item2 = new Item("item2",0,0,0,0);
+		Item item2 = new OrdinaryItem("item2",0,0,0,0);
 		refrigeratedTruck.addToCargo(item2, 400);
 		
 		refrigeratedTruck.removeFromCargo(item1, 200);
@@ -99,7 +101,7 @@ public class TruckTests {
 	
 	@Test
 	public void testGetCostOrdinary() throws InvalidItemException, StockException {
-		Item cookie = new Item("Cookie", 0, 0, 0, 0);
+		Item cookie = new OrdinaryItem("Cookie", 0, 0, 0, 0);
 		// Add 24 cookies to the cargo
 		ordinaryTruck.addToCargo(cookie, 24);
 		
