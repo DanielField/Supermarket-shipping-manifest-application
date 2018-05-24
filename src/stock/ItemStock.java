@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Store a single item along with it's ID and quantity.
  * 
  * @author Daniel Field
- *
+ * @author Allen Basic
  */
 public class ItemStock {
 
@@ -28,6 +28,8 @@ public class ItemStock {
 	}
 	
 	/**
+	 * Get the item ID.
+	 * 
 	 * @return The item ID.
 	 */
 	public int getItemID() {
@@ -44,6 +46,8 @@ public class ItemStock {
 	}
 	
 	/**
+	 * Get the item.
+	 * 
 	 * @return The Item object.
 	 */
 	public Item getItem() {
@@ -60,6 +64,7 @@ public class ItemStock {
 	}
 	
 	/**
+	 * Get the quantity for the item.
 	 * 
 	 * @return The amount of stock for the item.
 	 */
