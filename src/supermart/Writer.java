@@ -18,10 +18,18 @@ import stock.PerishableItem;
 import stock.Stock;
 
 /**
+ * Class that holds all of the methods for writing to files.
+ * 
  * @author Daniel Field
- *
+ * @author Allen Basic
  */
 public class Writer {
+	/**
+	 * Create a new file.
+	 * 
+	 * @param file File being created.
+	 * @throws IOException Throws if the method fails to create the new file.
+	 */
 	public static void CreateNewFile(String file) throws IOException {
 		File f = new File(file);
 		
@@ -30,6 +38,13 @@ public class Writer {
 		}
 	}
 	
+	/**
+	 * Writes the specified manifest into a comma-delimited file.
+	 * 
+	 * @param file The CSV file.
+	 * @param manifest The manifest being written.
+	 * @throws IOException Throws when there is an error writing to the file.
+	 */
 	public static void WriteManifestToCSV(String file, Manifest manifest) throws IOException {
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
@@ -56,6 +71,13 @@ public class Writer {
 		bw.close();
 	}
 	
+	/**
+	 * Write the specified item properties to a comma-delimited file.
+	 * 
+	 * @param file File being written to.
+	 * @param s The item properties.
+	 * @throws IOException Throws if there is an error writing to the file.
+	 */
 	public static void WriteItemPropertiesToCSV(String file, Stock s) throws IOException {
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);
@@ -89,6 +111,13 @@ public class Writer {
 		bw.close();
 	}
 	
+	/**
+	 * Write a sales log to the specified comma-delimited file.
+	 * 
+	 * @param file The sales log file being written to.
+	 * @param sales The sales being written.
+	 * @throws IOException Throws if there is an error writing to the file.
+	 */
 	public static void WriteSalesLogToCSV(String file, SaleList sales) throws IOException {
 		FileWriter fw = new FileWriter(file);
 		BufferedWriter bw = new BufferedWriter(fw);

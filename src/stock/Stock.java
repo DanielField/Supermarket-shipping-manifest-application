@@ -11,6 +11,7 @@ import exception.StockException;
  * stock orders, sales logs, and truck cargo
  * 
  * @author Daniel Field 
+ * @author Allen Basic
  */
 public class Stock extends ArrayList<ItemStock> {
 	private static final long serialVersionUID = 1L;
@@ -108,10 +109,7 @@ public class Stock extends ArrayList<ItemStock> {
 		return increaseQuantity(itemID, -amount); 
 	}
 	
-	@Override
-	public ItemStock get(int index) {
-		return stock.get(index);
-	}
+	
 	
 	/**
 	 * Get an ItemStock by it's item ID.
@@ -228,12 +226,26 @@ public class Stock extends ArrayList<ItemStock> {
 		}
 		return false;
 	}
-
+	
+	/* (non-Javadoc)
+	 * @see java.util.ArrayList#get(int)
+	 */
+	@Override
+	public ItemStock get(int index) {
+		return stock.get(index);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.util.ArrayList#iterator()
+	 */
 	@Override
 	public Iterator<ItemStock> iterator() {
 		return stock.iterator();
 	}
 
+	/* (non-Javadoc)
+	 * @see java.util.ArrayList#size()
+	 */
 	@Override
 	public int size() {
 		return stock.size();
