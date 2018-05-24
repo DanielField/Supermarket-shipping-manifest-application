@@ -8,6 +8,8 @@ import stock.PerishableItem;
 import stock.Stock;
 
 /**
+ * Class which extends Truck to create a specific truck for ordinary items.
+ * 
  * @author Daniel Field
  *
  */
@@ -33,6 +35,9 @@ public class OrdinaryTruck extends Truck {
 		return capacity;
 	}
 
+	/* (non-Javadoc)
+	 * @see delivery.Truck#addToCargo(stock.Stock)
+	 */
 	@Override
 	public void addToCargo(Stock cargo) throws InvalidItemException, StockException {
 		for (ItemStock is : cargo) {
@@ -40,6 +45,9 @@ public class OrdinaryTruck extends Truck {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see delivery.Truck#addToCargo(stock.Item, int)
+	 */
 	@Override
 	public void addToCargo(Item item, int quantity) throws InvalidItemException, StockException {
 		if (item.getClass() == PerishableItem.class)
@@ -52,11 +60,20 @@ public class OrdinaryTruck extends Truck {
 		else cargo.addNewItem(item, quantity);
 	}
 
+	/* (non-Javadoc)
+	 * @see delivery.Truck#removeFromCargo(stock.Item)
+	 */
 	@Override
-	public void removeFromCargo(Item item) {
-		this.cargo.removeAll(cargo);
+	public void removeFromCargo(Item item) throws InvalidItemException {
+		if (cargo.containsItem(item)) {
+			cargo.remove(cargo.getItemStock(item));
+		}
+		else throw new InvalidItemException("Item does not exist.");
 	}
 
+	/* (non-Javadoc)
+	 * @see delivery.Truck#removeFromCargo(stock.Item, int)
+	 */
 	@Override
 	public void removeFromCargo(Item item, int quantity) throws StockException, InvalidItemException {
 		if (cargo.containsItem(item)) {
@@ -66,6 +83,9 @@ public class OrdinaryTruck extends Truck {
 		else throw new InvalidItemException("Item does not exist.");
 	}
 
+	/* (non-Javadoc)
+	 * @see delivery.Truck#removeFromCargo(int, int)
+	 */
 	@Override
 	public void removeFromCargo(int itemID, int quantity) throws StockException, InvalidItemException {
 		if (cargo.containsItem(itemID)) {
@@ -74,11 +94,17 @@ public class OrdinaryTruck extends Truck {
 		else throw new InvalidItemException("Item does not exist.");
 	}
 
+	/* (non-Javadoc)
+	 * @see delivery.Truck#getTotalCargo()
+	 */
 	@Override
 	public int getTotalCargo() {
 		return cargo.stockTotal();
 	}
 
+	/* (non-Javadoc)
+	 * @see delivery.Truck#getCargo()
+	 */
 	@Override
 	public Stock getCargo() {
 		return cargo;
