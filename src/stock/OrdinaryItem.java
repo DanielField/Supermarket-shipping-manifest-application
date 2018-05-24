@@ -5,9 +5,11 @@ package stock;
 
 import exception.InvalidItemException;
 
-/**
- * @author Daniel Field
+/** 
+ * This class extends Item, and defines all of the abstract methods in terms of an ordinary non-perishable item.
  *
+ * @author Daniel Field
+ * @author Allen Basic
  */
 public class OrdinaryItem extends Item {
 	
@@ -17,6 +19,9 @@ public class OrdinaryItem extends Item {
 	private int reorderPoint;
 	private int reorderAmount;
 	
+	/**
+	 * Construct an OrdinaryItem with default properties.
+	 */
 	public OrdinaryItem() {
 		name = "";
 		manufacturingCost = 0;
@@ -25,6 +30,11 @@ public class OrdinaryItem extends Item {
 		reorderPoint = 0;
 	}
 	
+	/**
+	 * Construct an OrdinaryItem with the specified name, and other properties set to default.
+	 * 
+	 * @param name
+	 */
 	public OrdinaryItem(String name) {
 		this.name = name;
 		manufacturingCost = 0;
@@ -34,6 +44,8 @@ public class OrdinaryItem extends Item {
 	}
 	
 	/**
+	 * Construct an OrdinaryIterm with the specified properties.
+	 * 
 	 * @param name
 	 * @param manufacturingCost
 	 * @param sellPrice

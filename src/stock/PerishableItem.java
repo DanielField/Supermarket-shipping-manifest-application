@@ -5,9 +5,12 @@ package stock;
 
 import exception.InvalidItemException;
 
-/**
- * @author Daniel Field
+/** 
+ * This class extends Item, and defines all of the abstract methods in terms of a perishable item. 
+ * This differs from OrdinaryItem because it includes temperature.
  *
+ * @author Daniel Field
+ * @author Allen Basic
  */
 public class PerishableItem extends Item {
 	private String name;

@@ -8,7 +8,6 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
@@ -18,7 +17,6 @@ import javax.swing.SpringLayout;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 
 import delivery.Manifest;
 import delivery.OrdinaryTruck;
@@ -40,7 +38,7 @@ import supermart.Utils;
 import supermart.Writer;
 
 /**
- * This is the main panel. All of the other panels go inside this panel.
+ * This is the main panel. All of the content is displayed within this JPanel.
  * 
  * @author Daniel Field
  * @author Allen Basic
@@ -67,6 +65,9 @@ public class MainPanel extends JPanel {
 	DefaultTableModel tblInventoryModel = null;
 	String[] headings = {"Name", "Quantity", "Manufacturing Cost ($)", "Sell Price ($)", "Reorder Point", "Reorder Amount", "Temperature"};
 	
+	/**
+	 * Construct the JPanel, load the store information and item properties, then export a manifest based on the empty inventory and read it in.
+	 */
 	public MainPanel() {
 		layout = new SpringLayout();
 		setLayout(layout);
@@ -82,7 +83,7 @@ public class MainPanel extends JPanel {
 		}
 		
 		try {
-			LoadEmptyInventory(Strings.ITEM_PROPERTIES_CSV);
+			LoadItemProperties(Strings.ITEM_PROPERTIES_CSV);
 			status += "Inventory loaded into memory.\r\n";
 		} catch (IOException ioe) {
 			status += "Unable to load the inventory.\r\n";
@@ -93,7 +94,7 @@ public class MainPanel extends JPanel {
 		InitialiseLabels();
 		InitialiseTable();
 		InitialiseButtons();
-		InitialiseStatusField();
+		InitialiseStatusArea();
 		
 		// This is the default display when the programme is loaded.
 		DisplayStoreInformation();
@@ -113,13 +114,26 @@ public class MainPanel extends JPanel {
 		txtStatus.append("GUI loaded.\r\nDisplaying store information.\r\n");
 	}
 	
+	/**
+	 * Loads the store information from the specified file.
+	 * 
+	 * @param file The store information file.
+	 * @throws IOException Throws if there is an issue reading the file.
+	 */
 	private void LoadStoreInformation(String file) throws IOException {
 		String[] info = Reader.ReadStoreInfoFromCSV(file);
 		store.setName(info[0]);
 		store.setCapital(Double.parseDouble(info[1]));
 	}
 	
-	private void LoadEmptyInventory(String file) throws IOException, InvalidItemException {
+	/**
+	 * Loads the specifed item properties file and stores it in memory. It then puts all of the items in the store inventory.
+	 * 
+	 * @param file The item properties CSV file.
+	 * @throws IOException Throws when there is an issue reading the file.
+	 * @throws InvalidItemException Throws when an item is invalid.
+	 */
+	private void LoadItemProperties(String file) throws IOException, InvalidItemException {
 		itemProperties = Reader.ReadItemPropertiesFromCSV(file);
 		Object[][] inventory = new Object[itemProperties.size()][7];
 
@@ -133,12 +147,21 @@ public class MainPanel extends JPanel {
 			inventory[i][5] = item.getReorderAmount();
 			
 			if (item.getClass() == PerishableItem.class)
-				inventory[i][6] = ((PerishableItem)item).getTemperature();
+				inventory[i][6] = ((PerishableItem) item).getTemperature();
 		}
 		
 		store.setInventory(inventory);
 	}
 	
+	/**
+	 * Loads the specified manifest CSV file and calls the DecreaseCapital() method.
+	 * 
+	 * @param file The manifest CSV file.
+	 * @throws IOException Throws when there is an issue attempting to read the specified file.
+	 * @throws NumberFormatException Throws when there is an invalid number format.
+	 * @throws InvalidItemException Throws when one of the items is invalid.
+	 * @throws StockException Throws when there is an issue adding an item to the cargo of a truck.
+	 */
 	private void LoadManifest(String file) throws IOException, NumberFormatException, InvalidItemException, StockException {
 		manifest = Reader.ReadManifestFromCSV(file);
 		
@@ -146,7 +169,9 @@ public class MainPanel extends JPanel {
 		for (Truck t : manifest) {
 			// For each Item, quantity pair (ItemStock) in the cargo.
 			for (ItemStock truckItemStock : t.getCargo()) {
+				// If the item exists in the item properties
 				if (itemProperties.containsItem(truckItemStock.getItem().getName()))
+					// Set the manufacturing cost
 					truckItemStock.getItem().setManufacturingCost(itemProperties.getItemStock(truckItemStock.getItem().getName()).getItem().getManufacturingCost());
 			}
 		}
@@ -161,7 +186,7 @@ public class MainPanel extends JPanel {
 	private void PopulateInventory() {
 		// Loop through the inventory
 		for (int i = 0; i < store.inventorySize(); i++) {
-			String itemName = (String)store.getInventoryRow(i)[0];
+			String itemName = (String) store.getInventoryRow(i)[0];
 			Item truckItem = null;
 			
 			// For each truck in the manifest
@@ -179,9 +204,11 @@ public class MainPanel extends JPanel {
 	}
 	
 	/**
-	 * @return
-	 * @throws InvalidItemException
-	 * @throws StockException
+	 * Construct a manifest based on the inventory.
+	 * 
+	 * @return New manifest object.
+	 * @throws InvalidItemException Throws if there is an invalid item.
+	 * @throws StockException Throws if there is an invalid item being added to the cargo of a truck.
 	 */
 	private Manifest ConstructManifestFromInventory() throws InvalidItemException, StockException {
 		Manifest m = new Manifest();
@@ -267,7 +294,7 @@ public class MainPanel extends JPanel {
 	}
 	
 	/**
-	 * ...
+	 * Decrease the store capital based on the cost of the items in the manifest.
 	 * The pre-condition of this is that the item properties have been loaded and the manifest has been loaded into memory.
 	 */
 	private void DecreaseCapital() {
@@ -289,7 +316,13 @@ public class MainPanel extends JPanel {
 		store.setCapital(store.getCapital()-cost);
 	}
 	
+	/**
+	 * Create all of the buttons for the navigation and for CSV importing/exporting.
+	 */
 	private void InitialiseButtons() {
+		//
+		// Navigation buttons
+		//
 		btnStoreInfo = Components.CreateButton(this, layout, "Store Info", 10, 10);
 		layout.putConstraint(SpringLayout.EAST, btnStoreInfo, -10, SpringLayout.WEST, spInventory);
 		btnStoreInfo.addActionListener(new ActionListener() {
@@ -299,7 +332,7 @@ public class MainPanel extends JPanel {
 				DisplayStoreInformation();
 				
 				txtStatus.append("Displaying store information.\r\n");
-				((JFrame)getTopLevelAncestor()).setTitle("SuperMart - Store Information");
+				setFrameTitle("SuperMart - Store Information");
 			}
 		});
 		
@@ -439,6 +472,9 @@ public class MainPanel extends JPanel {
 		Components.addComponents(this, btnStoreInfo, btnInventory, btnExportManifest, btnImportSalesLog, btnImportManifest);
 	}
 	
+	/**
+	 * Creates the inventory JTable and loads in the manifest
+	 */
 	private void InitialiseTable() {
 		tblInventoryModel = new DefaultTableModel(store.getInventory(), headings);
 		tblInventory = new JTable(tblInventoryModel) {
@@ -479,6 +515,9 @@ public class MainPanel extends JPanel {
 		add(spInventory);
 	}
 	
+	/**
+	 * Create the labels which go in the store information screen.
+	 */
 	private void InitialiseLabels() {
 		// Initialise labels with default text
 		lblName = Components.CreateLabel(this, layout, "Store name: Supermart", 150, 10);
@@ -488,7 +527,10 @@ public class MainPanel extends JPanel {
 		Components.addComponents(this, lblName, lblCapital);
 	}
 	
-	private void InitialiseStatusField() {
+	/**
+	 * Create the status area to display the status of the application.
+	 */
+	private void InitialiseStatusArea() {
 		txtStatus = Components.CreateTextArea(this, layout, status, 150, 0);
 		txtStatus.setEditable(false);
 		
@@ -516,13 +558,16 @@ public class MainPanel extends JPanel {
 	}
 	
 	/**
-	 * Clear the content from the JPanel such as the inventory table, sales log, manifest, or store info.
+	 * Clear the content from the JPanel (this doesn't include the navigation buttons on the left)
 	 */
 	private void ClearScreen() {
 		HideInventory();
 		HideStoreInformation();
 	}
 	
+	/**
+	 * Display the store information components and disable the store information.
+	 */
 	private void DisplayStoreInformation() {
 		lblName.setText(String.format("Store name: %s", store.getName()));
 		String capital = Utils.FormatDollars(store.getCapital());
@@ -534,6 +579,9 @@ public class MainPanel extends JPanel {
 		btnStoreInfo.setEnabled(false);
 	}
 	
+	/**
+	 * Hide the store information components and enable the store information button.
+	 */
 	private void HideStoreInformation() {
 		lblName.setVisible(false);
 		lblCapital.setVisible(false);
@@ -541,6 +589,9 @@ public class MainPanel extends JPanel {
 		btnStoreInfo.setEnabled(true);
 	}
 	
+	/**
+	 * Display the inventory components and disable the inventory button.
+	 */
 	private void DisplayInventory() {	
 		tblInventoryModel = new DefaultTableModel(store.getInventory(), headings);
 		tblInventory.setModel(tblInventoryModel);
@@ -552,9 +603,21 @@ public class MainPanel extends JPanel {
 		
 		btnInventory.setEnabled(false);
 		
-		((JFrame)getTopLevelAncestor()).setTitle("SuperMart - Inventory");
+		setFrameTitle("SuperMart - Inventory");
+	}
+
+	/**
+	 * Sets the title of the JFrame.
+	 * 
+	 * @param title The text to which the title is set
+	 */
+	private void setFrameTitle(String title) {
+		((JFrame)getTopLevelAncestor()).setTitle(title);
 	}
 	
+	/**
+	 * Hide the inventory components and enable the inventory button.
+	 */
 	private void HideInventory() {
 		spInventory.setVisible(false);
 		btnImportManifest.setVisible(false);
