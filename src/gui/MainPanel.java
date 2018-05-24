@@ -49,11 +49,10 @@ import supermart.Writer;
 public class MainPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
-	private SpringLayout layout;
+	private SpringLayout layout = null;
 	
 	private static Store store = null;
-	//private Stock inventory = null;
-	private Object[][] inventory = null;
+	
 	Stock itemProperties = null;
 	private Manifest manifest = null; 
 	
@@ -122,7 +121,7 @@ public class MainPanel extends JPanel {
 	
 	private void LoadEmptyInventory(String file) throws IOException, InvalidItemException {
 		itemProperties = Reader.ReadItemPropertiesFromCSV(file);
-		inventory = new Object[itemProperties.size()][7];
+		Object[][] inventory = new Object[itemProperties.size()][7];
 
 		for (int i = 0; i < itemProperties.size(); i++) {
 			Item item = itemProperties.get(i).getItem();
@@ -136,6 +135,8 @@ public class MainPanel extends JPanel {
 			if (item.getClass() == PerishableItem.class)
 				inventory[i][6] = ((PerishableItem)item).getTemperature();
 		}
+		
+		store.setInventory(inventory);
 	}
 	
 	private void LoadManifest(String file) throws IOException, NumberFormatException, InvalidItemException, StockException {
@@ -159,8 +160,8 @@ public class MainPanel extends JPanel {
 	 */
 	private void PopulateInventory() {
 		// Loop through the inventory
-		for (int i = 0; i < inventory.length; i++) {
-			String itemName = (String)inventory[i][0];
+		for (int i = 0; i < store.inventorySize(); i++) {
+			String itemName = (String)store.getInventoryRow(i)[0];
 			Item truckItem = null;
 			
 			// For each truck in the manifest
@@ -170,7 +171,7 @@ public class MainPanel extends JPanel {
 					truckItem = truckItemStock.getItem();
 					
 					if (itemName.equals(truckItem.getName())) {
-						inventory[i][1] = (int)inventory[i][1] + truckItemStock.getQuantity();
+						store.incrementInventoryQuantity(i, truckItemStock.getQuantity());
 					}
 				}
 			}
@@ -187,7 +188,7 @@ public class MainPanel extends JPanel {
 		Truck ordinaryTruck = new OrdinaryTruck();
 		Truck refrigeratedTruck = new RefrigeratedTruck();
 		
-		for (Object[] row : inventory) {
+		for (Object[] row : store.getInventory()) {
 			// If the item is not perishable
 			if (row[6] == null) {		
 				// If the cargo plus the quantity being added is less than the maximum capacity
@@ -405,15 +406,14 @@ public class MainPanel extends JPanel {
 						SaleList saleList = Reader.ReadSalesFromCSV(chooser.getSelectedFile().getAbsolutePath());
 						
 						for (Sale s : saleList.getList()) {
-							for (int i = 0; i < inventory.length; i++) {
-								String rowItemName = (String) inventory[i][0];
+							for (int i = 0; i < store.inventorySize(); i++) {
+								String rowItemName = (String) store.getInventoryRow(i)[0];
 								
 								if (s.getItemName().equals(rowItemName)) {
 									double sellPrice = itemProperties.getItemStock(s.getItemName()).getItem().getSellPrice();
 									store.setCapital(store.getCapital() + (sellPrice * s.getQuantity()));
 									
-									inventory[i][1] = (int) inventory[i][1] - s.getQuantity(); 
-									
+									store.incrementInventoryQuantity(i, -s.getQuantity());
 									break;
 								}
 							}
@@ -440,7 +440,7 @@ public class MainPanel extends JPanel {
 	}
 	
 	private void InitialiseTable() {
-		tblInventoryModel = new DefaultTableModel(inventory, headings);
+		tblInventoryModel = new DefaultTableModel(store.getInventory(), headings);
 		tblInventory = new JTable(tblInventoryModel) {
 			private static final long serialVersionUID = 1L;
 			
@@ -542,7 +542,7 @@ public class MainPanel extends JPanel {
 	}
 	
 	private void DisplayInventory() {	
-		tblInventoryModel = new DefaultTableModel(inventory, headings);
+		tblInventoryModel = new DefaultTableModel(store.getInventory(), headings);
 		tblInventory.setModel(tblInventoryModel);
 		
 		spInventory.setVisible(true);

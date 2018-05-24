@@ -27,18 +27,6 @@ public class Stock extends ArrayList<ItemStock> {
 	}
 	
 	/**
-	 * Check whether the specified item ID is already in use.
-	 * 
-	 * @param id Specified ID.
-	 * @return True if the ID is taken, else false.
-	 */
-	private boolean IDTaken(int id) {
-		for (ItemStock itemStock : stock)
-			if (itemStock.getItemID() == id) return true;
-		return false;
-	}
-	
-	/**
 	 * Check whether the specified item is already in the collection.
 	 * 
 	 * @param i Specified Item.
@@ -48,21 +36,6 @@ public class Stock extends ArrayList<ItemStock> {
 		for (ItemStock itemStock : stock)
 			if (itemStock.getItem() == i) return true;
 		return false;
-	}
-	
-	/**
-	 * Randomly generate a unique item ID.
-	 * 
-	 * @return Unique item ID.
-	 */
-	private int generateID() {
-		int id;
-		do {
-			id = (int) (Math.random() * 100000);
-		}
-		while(IDTaken(id) == true);
-		
-		return id;
 	}
 	
 	/**
@@ -78,7 +51,7 @@ public class Stock extends ArrayList<ItemStock> {
 		if (ItemExists(i)) {
 			throw new InvalidItemException("Item already exists");
 		}
-		ItemStock is = new ItemStock(generateID(), i, initialQuantity);
+		ItemStock is = new ItemStock(ItemStock.generateID(stock), i, initialQuantity);
 		stock.add(is);
 		return is;
 	}

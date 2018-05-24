@@ -3,6 +3,8 @@
  */
 package supermart;
 
+import stock.Item;
+import stock.ItemStock;
 import stock.Stock;
 
 /**
@@ -15,7 +17,7 @@ public class Store {
 	
 	private static String name = "Supermart";
 	private static double capital = 100000;
-	private static Stock inventory = new Stock();
+	private static Object[][] inventory = null;
 	
 	/**
 	 * 
@@ -71,14 +73,26 @@ public class Store {
 	/**
 	 * @param inventory
 	 */
-	public void setInventory(Stock inventory) {
+	public void setInventory(Object[][] inventory) {
 		Store.inventory = inventory;
 	}
 	
 	/**
 	 * @return
 	 */
-	public Stock getInventory() {
+	public Object[][] getInventory() {
 		return inventory;
+	}
+	
+	public Object[] getInventoryRow(int i) {
+		return inventory[i];
+	}
+	
+	public int inventorySize() {
+		return inventory.length;
+	}
+	
+	public void incrementInventoryQuantity(int row, int quantity) {
+		inventory[row][1] = (int)inventory[row][1] + quantity;
 	}
 }
