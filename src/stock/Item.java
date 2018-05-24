@@ -3,13 +3,7 @@ package stock;
 import exception.InvalidItemException;
 
 /** 
- * An item, possessing the following properties:
- *	- Name.
- *	- Manufacturing cost in dollars.
- *	- Sell price in dollars.
- *	- Reorder point.
- *	- Reorder amount.
- *	- Temperature in �C that must be maintained for the item to not perish.
+ * An abstract class which represents an item.
  *
  * @author Daniel Field
  */
