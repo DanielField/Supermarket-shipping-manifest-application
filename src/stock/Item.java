@@ -1,6 +1,6 @@
 package stock;
 
-import exception.InvalidItemException;
+import exception.StockException;
 
 /** 
  * An abstract class which represents an item.
@@ -17,7 +17,7 @@ public abstract class Item {
 	 * @param name
 	 * @throws InvalidItemException
 	 */
-	public abstract void setName(String name) throws InvalidItemException;
+	public abstract void setName(String name) throws StockException;
 	
 	/**
 	 * Get the manufacturing cost of the item.

@@ -11,7 +11,7 @@ import org.junit.Test;
 import delivery.OrdinaryTruck;
 import delivery.RefrigeratedTruck;
 import delivery.Truck;
-import exception.InvalidItemException;
+import exception.DeliveryException;
 import exception.StockException;
 import stock.Item;
 import stock.ItemStock;
@@ -24,49 +24,19 @@ import stock.Stock;
  *
  */
 public class TruckTests {
-	
-	/*
-	 * 
-		� Truck. An abstract class for the two truck types.
-		� Refrigerated Truck. A truck, possessing at least the following properties:
-			� Cost in dollars equal to 900 + 200 � 0.7
-			T/5 where T is the truck�s
-			temperature in �C.
-			� Cargo capacity of 800 items.
-			� Cargo. All items can be stored in a refrigerated truck�s cargo, including
-			dry goods (items that do not need to be temperature controlled).
-			� Temperature in �C that maintains a safe temperature for the truck�s
-			cargo. This is equal to the temperature of the item in the cargo with
-			the coldest safe temperature. The allowed temperature range is from
-			-20�C inclusive to 10�C inclusive.
-		� Ordinary Truck. A truck, possessing at least the following properties:
-			� Cost in dollars equal to 750 + 0.25q where q is the total quantity of
-			items in the cargo.
-			� Cargo capacity of 1000 items.
-			� Cargo. Temperature controlled items cannot be stored in an ordinary
-			truck�s cargo, only dry goods.
-		� Manifest. A collection of trucks
-	*/
 
 	Truck refrigeratedTruck;
 	Truck ordinaryTruck;
 	
 	@Before @Test
 	public void testInit() {
-		double temperature = -12.3;
-		refrigeratedTruck = new RefrigeratedTruck(temperature);
+		refrigeratedTruck = new RefrigeratedTruck(-12.3);
 		ordinaryTruck = new OrdinaryTruck();
 	}
-	
-	/**
-	 * tests to validate the correctness of the addToCargo and addNewItem Truck methods
-	 * @throws InvalidItemException
-	 * @throws StockException
-	 */
-	
+
 	//OrdinaryTruck addNewItem, addToCargo tests
 	@Test
-	public void testAddOrdinaryToCargo() throws InvalidItemException, StockException {
+	public void testAddOrdinaryToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item canOfSoup = new OrdinaryItem(null, 0, 0, 0, 0);
 		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
@@ -78,7 +48,7 @@ public class TruckTests {
 		assertEquals(62, ordinaryTruck.getTotalCargo());
 	}
 	
-	public void testAddWrongOrdinaryToCargo() throws InvalidItemException, StockException {
+	public void testAddWrongOrdinaryToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item canOfSoup = new OrdinaryItem(null, 0, 0, 0, 0);
 		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
@@ -90,8 +60,8 @@ public class TruckTests {
 		assertNotEquals(89, ordinaryTruck.getTotalCargo());
 	}
 	
-	@Test
-	public void testAddZeroOrdinaryItemToCargo() throws InvalidItemException, StockException {
+	@Test (expected = DeliveryException.class)
+	public void testAddZeroOrdinaryItemToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item canOfSoup = new OrdinaryItem(null, 0, 0, 0, 0);
 		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
@@ -100,11 +70,10 @@ public class TruckTests {
 		cargo.addNewItem(cookie, 0);
 		
 		ordinaryTruck.addToCargo(cargo);
-		assertEquals(0, ordinaryTruck.getTotalCargo());
 	}
 	
 	@Test (expected = StockException.class)
-	public void testAddMillionOrdinaryItemToCargo() throws InvalidItemException, StockException {
+	public void testAddMillionOrdinaryItemToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item canOfSoup = new OrdinaryItem(null, 0, 0, 0, 0);
 		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
@@ -119,7 +88,7 @@ public class TruckTests {
 	
 	//RefrigeratedTruck addNewItem, addToCargo tests
 	@Test
-	public void testAddPerishableToCargo() throws InvalidItemException, StockException {
+	public void testAddPerishableToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item icecream = new PerishableItem(null, 0, 0, 0, 0, 0);
 		Item FrozenPizza = new PerishableItem(null, 0, 0, 0, 0, 0);
@@ -132,7 +101,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testAddWrongPerishableToCargo() throws InvalidItemException, StockException {
+	public void testAddWrongPerishableToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item icecream = new PerishableItem(null, 0, 0, 0, 0, 0);
 		Item FrozenPizza = new PerishableItem(null, 0, 0, 0, 0, 0);
@@ -145,7 +114,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testAddZeroPerishableItemToCargo() throws InvalidItemException, StockException {
+	public void testAddZeroPerishableItemToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item icecream = new PerishableItem(null, 0, 0, 0, 0, 0);
 		Item FrozenPizza = new PerishableItem(null, 0, 0, 0, 0, 0);
@@ -158,7 +127,7 @@ public class TruckTests {
 	}
 	
 	@Test (expected = StockException.class)
-	public void testAddMillionPerishableItemToCargo() throws InvalidItemException, StockException {
+	public void testAddMillionPerishableItemToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item icecream = new PerishableItem(null, 0, 0, 0, 0, 0);
 		Item FrozenPizza = new PerishableItem(null, 0, 0, 0, 0, 0);
@@ -171,8 +140,8 @@ public class TruckTests {
 		//END RefrigeratedTruck addNewItem, addToCargo tests
 
 	
-	@Test(expected = InvalidItemException.class)
-	public void testAddInvalidTemperatureItemToCargo() throws InvalidItemException, StockException {
+	@Test(expected = DeliveryException.class)
+	public void testAddInvalidTemperatureItemToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item liquidHelium = new PerishableItem("liquid Helium", 0, 0, 0, 0, -290);
 		
@@ -182,14 +151,8 @@ public class TruckTests {
 	}
 	
 	//OrdinaryTruck RemoveFromCargo tests
-	
-	/**
-	 * Test to remove ordinary Item from cargo by Object 
-	 * @throws InvalidItemException
-	 * @throws StockException
-	 */
 	@Test
-	public void testRemoveOrdinaryFromCargo() throws InvalidItemException, StockException {
+	public void testRemoveOrdinaryFromCargo() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem("cookie", 0, 0, 0 , 0);
 		ordinaryTruck.addToCargo(cookie, 500);	
 		ordinaryTruck.removeFromCargo(cookie);
@@ -197,13 +160,8 @@ public class TruckTests {
 		assertFalse(ordinaryTruck.getCargo().contains(cookie));	
 	}
 	
-	/**
-	 * Test to remove quantity of ordinary item from cargo
-	 * @throws InvalidItemException
-	 * @throws StockException
-	 */
 	@Test
-	public void testRemoveOrdinaryAmountFromCargo() throws InvalidItemException, StockException {
+	public void testRemoveOrdinaryAmountFromCargo() throws DeliveryException, StockException {
 		Item item1 = new OrdinaryItem("item1",0,0,0,0);
 		ordinaryTruck.addToCargo(item1, 200);
 		Item item2 = new OrdinaryItem("item2",0,0,0,0);
@@ -213,14 +171,9 @@ public class TruckTests {
 		ordinaryTruck.removeFromCargo(item2, 50);
 		assertEquals(350, ordinaryTruck.getTotalCargo());
 	}
-	
-	/**
-	 * Test to remove item from cargo by ID
-	 * @throws InvalidItemException
-	 * @throws StockException
-	 */
+
 	@Test
-	public void testRemoveOrdinaryFromCargoByID() throws InvalidItemException, StockException{
+	public void testRemoveOrdinaryFromCargoByID() throws DeliveryException, StockException{
 		Item cookie = new OrdinaryItem("cookie", 0, 0, 0 , 0);
 		
 		ordinaryTruck.addToCargo(cookie, 500);
@@ -231,7 +184,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testRemoveWrongOrdinaryFromCargo() throws InvalidItemException, StockException {
+	public void testRemoveWrongOrdinaryFromCargo() throws DeliveryException, StockException {
 		Item item1 = new OrdinaryItem("item1",0,0,0,0);
 		ordinaryTruck.addToCargo(item1, 200);
 		Item item2 = new OrdinaryItem("item1",0,0,0,0);
@@ -243,7 +196,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testRemoveZeroOrdinaryFromCargo() throws InvalidItemException, StockException {
+	public void testRemoveZeroOrdinaryFromCargo() throws DeliveryException, StockException {
 		Item item1 = new OrdinaryItem("item1",0,0,0,0);
 		ordinaryTruck.addToCargo(item1, 200);
 		Item item2 = new OrdinaryItem("item1",0,0,0,0);
@@ -251,11 +204,11 @@ public class TruckTests {
 		
 		ordinaryTruck.removeFromCargo(item1, 0);
 		ordinaryTruck.removeFromCargo(item2, 0);
-		assertEquals(600, refrigeratedTruck.getTotalCargo());
+		assertEquals(600, ordinaryTruck.getTotalCargo());
 	}
 	
 	@Test (expected = StockException.class)
-	public void testRemoveMillionOrdinaryFromCargo() throws InvalidItemException, StockException {
+	public void testRemoveMillionOrdinaryFromCargo() throws DeliveryException, StockException {
 		Item item1 = new OrdinaryItem("item1",0,0,0,0);
 		ordinaryTruck.addToCargo(item1, 200);
 		Item item2 = new OrdinaryItem("item1",0,0,0,0);
@@ -269,7 +222,7 @@ public class TruckTests {
 	
 	//RefrigeratedTruck RemoveFromCargo tests	
 	@Test
-	public void testRemoveRefrigeratedFromCargo() throws InvalidItemException, StockException {
+	public void testRemoveRefrigeratedFromCargo() throws DeliveryException, StockException {
 		Item icecream = new OrdinaryItem("cookie", 0, 0, 0 , 0);
 		refrigeratedTruck.addToCargo(icecream, 500);	
 		refrigeratedTruck.removeFromCargo(icecream);
@@ -277,7 +230,7 @@ public class TruckTests {
 		assertFalse(refrigeratedTruck.getCargo().contains(icecream));	
 	}
 	
-	public void testRemoveRefridgeratedFromCargo() throws InvalidItemException, StockException {
+	public void testRemoveRefridgeratedFromCargo() throws DeliveryException, StockException {
 		Item item1 = new PerishableItem("item1",0,0,0,0,0);
 		refrigeratedTruck.addToCargo(item1, 200);
 		Item item2 = new PerishableItem("item1",0,0,0,0,0);
@@ -289,7 +242,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testRemoveRefrigeratedFromCargoByID() throws InvalidItemException, StockException{
+	public void testRemoveRefrigeratedFromCargoByID() throws DeliveryException, StockException{
 		Item icecream = new PerishableItem("cookie", 0, 0, 0 , 0, 0);
 		
 		refrigeratedTruck.addToCargo(icecream, 40);
@@ -300,7 +253,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testRemoveWrongRefrigeratedFromCargo() throws InvalidItemException, StockException {
+	public void testRemoveWrongRefrigeratedFromCargo() throws DeliveryException, StockException {
 		Item item1 = new PerishableItem("item1",0,0,0,0,0);
 		refrigeratedTruck.addToCargo(item1, 200);
 		Item item2 = new PerishableItem("item1",0,0,0,0,0);
@@ -312,7 +265,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testRemoveZeroRefrigeratedFromCargo() throws InvalidItemException, StockException {
+	public void testRemoveZeroRefrigeratedFromCargo() throws DeliveryException, StockException {
 		Item item1 = new PerishableItem("item1",0,0,0,0,0);
 		refrigeratedTruck.addToCargo(item1, 200);
 		Item item2 = new PerishableItem("item1",0,0,0,0,0);
@@ -324,7 +277,7 @@ public class TruckTests {
 	}
 	
 	@Test (expected = StockException.class)
-	public void testRemoveMillionRefrigeratedFromCargo() throws InvalidItemException, StockException {
+	public void testRemoveMillionRefrigeratedFromCargo() throws DeliveryException, StockException {
 		Item item1 = new PerishableItem("item1",0,0,0,0,0);
 		refrigeratedTruck.addToCargo(item1, 200);
 		Item item2 = new PerishableItem("item1",0,0,0,0,0);
@@ -344,7 +297,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testGetCostOrdinary() throws InvalidItemException, StockException {
+	public void testGetCostOrdinary() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem("Cookie", 0, 0, 0, 0);
 		// Add 24 cookies to the cargo
 		ordinaryTruck.addToCargo(cookie, 24);
@@ -354,7 +307,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testRemoveThanGetCost() throws InvalidItemException, StockException {
+	public void testRemoveThanGetCost() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem("Cookie", 0, 0, 0, 0);
 		// Add 24 cookies to the cargo
 		ordinaryTruck.addToCargo(cookie, 24);
@@ -366,7 +319,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testRemoveThanGetCostRefrigerated() throws InvalidItemException, StockException {
+	public void testRemoveThanGetCostRefrigerated() throws DeliveryException, StockException {
 		Item icecream = new PerishableItem("icecream", 0, 0, 0, 0, -12);
 		// Add 24 cookies to the cargo
 		refrigeratedTruck.addToCargo(icecream, 40);
@@ -381,57 +334,43 @@ public class TruckTests {
 	
 	//Ordinary and Refrigerated Truck getCapacity tests
 	@Test (expected = StockException.class)
-	public void testGetCapacityMillion() throws InvalidItemException, StockException {
+	public void testGetCapacityMillion() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
 		ordinaryTruck.addToCargo(cookie, 1000000);					
 	}
-	
-	/**
-	 * Tests to see if capacities of trucks are correct
-	 * Ordinary truck : 1000 capacity, Refrigerated truck : 800 capacity
-	 * @throws InvalidItemException
-	 * @throws StockException
-	 */
+
 	@Test
-	public void testGetCapacityBothTrucks() throws InvalidItemException, StockException {	
+	public void testGetCapacityBothTrucks() throws DeliveryException, StockException {	
 		int capacity = ordinaryTruck.getCapacity() + refrigeratedTruck.getCapacity();	
 		assertEquals(1800, capacity);
 	}
 	
 	@Test
-	public void testGetCapacityOrdinaryTruck() throws InvalidItemException, StockException {
+	public void testGetCapacityOrdinaryTruck() throws DeliveryException, StockException {
 		int capacity = ordinaryTruck.getCapacity();
 		assertEquals(1000, capacity);
 	}
 	
 	@Test
-	public void testGetWrongCapacityOrdinaryTruck() throws InvalidItemException, StockException {
+	public void testGetWrongCapacityOrdinaryTruck() throws DeliveryException, StockException {
 		int capacity = ordinaryTruck.getCapacity();
 		assertNotEquals(800, capacity);
 	}
 	
 	@Test
-	public void testGetCapacityRefrigeratedTruck() throws InvalidItemException, StockException {
+	public void testGetCapacityRefrigeratedTruck() throws DeliveryException, StockException {
 		int capacity = refrigeratedTruck.getCapacity();
 		assertEquals(800, capacity);
 	}
 	@Test
-	public void testGetWrongCapacityRefrigeratedTruck() throws InvalidItemException, StockException {
+	public void testGetWrongCapacityRefrigeratedTruck() throws DeliveryException, StockException {
 		int capacity = refrigeratedTruck.getCapacity();
 		assertNotEquals(1000, capacity);
 	}
 	
 	//END Ordinary and Refrigerated Truck getCapacity tests
-
-	
-	/**
-	 * Test to validate the correctness of the getTotalCargo Methods
-	 * both refridgeratedtruck and ordinarytruck methods implemented
-	 * @throws InvalidItemException
-	 * @throws StockException
-	 */
 	@Test
-	public void testGetTotalCargoBothTrucks() throws InvalidItemException, StockException {
+	public void testGetTotalCargoBothTrucks() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem("Cookie", 0, 0, 0, 0);
 		Item icecream = new PerishableItem("Icecream", 0, 0, 0, 0, -12);		
 		ordinaryTruck.addToCargo(cookie, 24);
@@ -444,7 +383,7 @@ public class TruckTests {
 	
 	//GetTotalCargo OrdinaryTruck Tests
 	@Test
-	public void testGetTotalCargoOrdinaryTruck() throws InvalidItemException, StockException {
+	public void testGetTotalCargoOrdinaryTruck() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem("Cookie", 0, 0, 0, 0);		
 		ordinaryTruck.addToCargo(cookie, 24);
 		
@@ -453,7 +392,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testGetTotalCargoOrdinaryTruckWrong() throws InvalidItemException, StockException {
+	public void testGetTotalCargoOrdinaryTruckWrong() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem("Cookie", 0, 0, 0, 0);		
 		ordinaryTruck.addToCargo(cookie, 12);
 		
@@ -462,7 +401,7 @@ public class TruckTests {
 	}
 			
 	@Test
-	public void testGetTotalCargoOrdinaryTruckZero() throws InvalidItemException, StockException {
+	public void testGetTotalCargoOrdinaryTruckZero() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
 		ordinaryTruck.addToCargo(cookie, 0);
 	
@@ -471,13 +410,13 @@ public class TruckTests {
 	}
 	
 	@Test (expected = StockException.class)
-	public void testGetTotalCargoOrdinaryTruckMillion() throws InvalidItemException, StockException {
+	public void testGetTotalCargoOrdinaryTruckMillion() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
 		ordinaryTruck.addToCargo(cookie, 50000);
 	}
 	
-	@Test (expected = StockException.class)
-	public void testGetTotalCargoOrdinaryTruckNegative() throws InvalidItemException, StockException {
+	@Test (expected = DeliveryException.class)
+	public void testGetTotalCargoOrdinaryTruckNegative() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
 		ordinaryTruck.addToCargo(cookie, -55);
 	}
@@ -486,7 +425,7 @@ public class TruckTests {
 	
 	//GetTotalCargo RefrigeratedTruck Tests
 	@Test
-	public void testGetTotalCargoRefrigeratedTruck() throws InvalidItemException, StockException {
+	public void testGetTotalCargoRefrigeratedTruck() throws DeliveryException, StockException {
 		Item Icecream = new PerishableItem("Icecream", 0, 0, 0, 0, -12);		
 		refrigeratedTruck.addToCargo(Icecream, 50);
 		
@@ -495,7 +434,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testGetTotalCargoRefrigeratedTruckWrong() throws InvalidItemException, StockException {
+	public void testGetTotalCargoRefrigeratedTruckWrong() throws DeliveryException, StockException {
 		Item Icecream = new PerishableItem("Icecream", 0, 0, 0, 0, -12);	
 		refrigeratedTruck.addToCargo(Icecream, 50);
 		
@@ -504,7 +443,7 @@ public class TruckTests {
 	}
 			
 	@Test
-	public void testGetTotalCargoRefrigeratedTruckZero() throws InvalidItemException, StockException {
+	public void testGetTotalCargoRefrigeratedTruckZero() throws DeliveryException, StockException {
 		Item Icecream = new PerishableItem("Icecream", 0, 0, 0, 0, -12);
 		refrigeratedTruck.addToCargo(Icecream, 0);
 	
@@ -513,13 +452,13 @@ public class TruckTests {
 	}
 	
 	@Test (expected = StockException.class)
-	public void testGetTotalCargoRefrigeratedTruckMillion() throws InvalidItemException, StockException {
+	public void testGetTotalCargoRefrigeratedTruckMillion() throws DeliveryException, StockException {
 		Item Icecream = new PerishableItem("Icecream", 0, 0, 0, 0, -12);
 		refrigeratedTruck.addToCargo(Icecream, 50000);
 	}
 	
 	@Test (expected = StockException.class)
-	public void testGetTotalCargoRefrigeratedTruckNegative() throws InvalidItemException, StockException {
+	public void testGetTotalCargoRefrigeratedTruckNegative() throws DeliveryException, StockException {
 		Item Icecream = new PerishableItem("Icecream", 0, 0, 0, 0, -12);
 		refrigeratedTruck.addToCargo(Icecream, -55);
 	}

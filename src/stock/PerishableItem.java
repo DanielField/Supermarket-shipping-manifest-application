@@ -3,7 +3,7 @@
  */
 package stock;
 
-import exception.InvalidItemException;
+import exception.StockException;
 
 /** 
  * This class extends Item, and defines all of the abstract methods in terms of a perishable item. 
@@ -76,9 +76,9 @@ public class PerishableItem extends Item {
 	/* (non-Javadoc)
 	 * @see stock.Item#setName(java.lang.String)
 	 */
-	public void setName(String name) throws InvalidItemException {
+	public void setName(String name) throws StockException {
 		if (name.isEmpty()) {
-			throw new InvalidItemException();
+			throw new StockException();
 		}
 		this.name = name;
 	}

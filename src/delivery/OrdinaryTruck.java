@@ -1,6 +1,6 @@
 package delivery;
 
-import exception.InvalidItemException;
+import exception.DeliveryException;
 import exception.StockException;
 import stock.Item;
 import stock.ItemStock;
@@ -39,7 +39,7 @@ public class OrdinaryTruck extends Truck {
 	 * @see delivery.Truck#addToCargo(stock.Stock)
 	 */
 	@Override
-	public void addToCargo(Stock cargo) throws InvalidItemException, StockException {
+	public void addToCargo(Stock cargo) throws DeliveryException, StockException {
 		for (ItemStock is : cargo) {
 			addToCargo(is.getItem(), is.getQuantity());
 		}
@@ -49,9 +49,11 @@ public class OrdinaryTruck extends Truck {
 	 * @see delivery.Truck#addToCargo(stock.Item, int)
 	 */
 	@Override
-	public void addToCargo(Item item, int quantity) throws InvalidItemException, StockException {
+	public void addToCargo(Item item, int quantity) throws DeliveryException, StockException {
 		if (item.getClass() == PerishableItem.class)
-			throw new InvalidItemException("Perishable goods must not go in a non-refrigerated truck.");
+			throw new DeliveryException("Perishable goods must not go in a non-refrigerated truck.");
+		else if (quantity < 1)
+			throw new DeliveryException("Quantity is invalid. Must be one or higher.");
 		
 		if (cargo.containsItem(item)) {
 			ItemStock is = cargo.getItemStock(item);
@@ -64,34 +66,34 @@ public class OrdinaryTruck extends Truck {
 	 * @see delivery.Truck#removeFromCargo(stock.Item)
 	 */
 	@Override
-	public void removeFromCargo(Item item) throws InvalidItemException {
+	public void removeFromCargo(Item item) throws DeliveryException, StockException {
 		if (cargo.containsItem(item)) {
 			cargo.remove(cargo.getItemStock(item));
 		}
-		else throw new InvalidItemException("Item does not exist.");
+		else throw new DeliveryException("Item does not exist.");
 	}
 
 	/* (non-Javadoc)
 	 * @see delivery.Truck#removeFromCargo(stock.Item, int)
 	 */
 	@Override
-	public void removeFromCargo(Item item, int quantity) throws StockException, InvalidItemException {
+	public void removeFromCargo(Item item, int quantity) throws DeliveryException, StockException {
 		if (cargo.containsItem(item)) {
 			ItemStock is = cargo.getItemStock(item);
 			cargo.decreaseQuantity(is.getItemID(), quantity);
 		}
-		else throw new InvalidItemException("Item does not exist.");
+		else throw new DeliveryException("Item does not exist.");
 	}
 
 	/* (non-Javadoc)
 	 * @see delivery.Truck#removeFromCargo(int, int)
 	 */
 	@Override
-	public void removeFromCargo(int itemID, int quantity) throws StockException, InvalidItemException {
+	public void removeFromCargo(int itemID, int quantity) throws DeliveryException, StockException {
 		if (cargo.containsItem(itemID)) {
 			cargo.decreaseQuantity(itemID, quantity);
 		}
-		else throw new InvalidItemException("Item does not exist.");
+		else throw new DeliveryException("Item does not exist.");
 	}
 
 	/* (non-Javadoc)

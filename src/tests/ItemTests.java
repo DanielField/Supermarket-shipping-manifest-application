@@ -10,7 +10,7 @@ import static org.junit.Assert.assertNotEquals;
 import org.junit.Before;
 import org.junit.Test;
 
-import exception.InvalidItemException;
+import exception.StockException;
 import stock.Item;
 import stock.OrdinaryItem;
 import stock.PerishableItem;
@@ -22,16 +22,6 @@ import stock.PerishableItem;
  *
  */
 public class ItemTests {
-	
-//	  Item. An item, possessing at least the following properties:
-//		� Name.
-//		� Manufacturing cost in dollars.
-//		� Sell price in dollars.
-//		� Reorder point.
-//		� Reorder amount.
-//		� Temperature in �C that must be maintained for the item to not perish.
-//		Not all items are temperature controlled, and so they will not
-//		need a temperature.
 
 	public Item perishable;
 	public Item ordinary;
@@ -44,20 +34,20 @@ public class ItemTests {
 	
 	//PerishableItem name tests
 	@Test
-	public void testPerishableName() throws InvalidItemException {
+	public void testPerishableName() throws StockException {
 		perishable.setName("Chicken");
 		String name = perishable.getName();
 		
 		assertEquals("Chicken", name);
 	}
 	
-	@Test(expected=InvalidItemException.class)
-	public void testPerishableNameEmpty() throws InvalidItemException {
+	@Test(expected=StockException.class)
+	public void testPerishableNameEmpty() throws StockException {
 		perishable.setName("");		
 	}
 	
 	@Test
-	public void testPerishableNameNumber() throws InvalidItemException {
+	public void testPerishableNameNumber() throws StockException {
 		perishable.setName("42");
 		String name = perishable.getName();
 		
@@ -65,7 +55,7 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testLongPerishableName() throws InvalidItemException {
+	public void testLongPerishableName() throws StockException {
 		perishable.setName("Verylongcerealbrandwithaverylongname"); 
 		String name = perishable.getName();
 		
@@ -73,7 +63,7 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testShortPerishableName() throws InvalidItemException {
+	public void testShortPerishableName() throws StockException {
 		perishable.setName("x");
 		String name = perishable.getName();
 		
@@ -83,7 +73,7 @@ public class ItemTests {
 	
 	//PerishableItem manufacturtingCost tests
 	@Test
-	public void testPerishableItemManufacturingCost() throws InvalidItemException {
+	public void testPerishableItemManufacturingCost() throws StockException {
 		perishable.setManufacturingCost(54.85);
 		double cost = perishable.getManufacturingCost();
 		
@@ -91,7 +81,7 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testPerishableItemManufacturingCostWrong() throws InvalidItemException {
+	public void testPerishableItemManufacturingCostWrong() throws StockException {
 		perishable.setManufacturingCost(43);
 		double cost = perishable.getManufacturingCost();
 		
@@ -99,20 +89,20 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testPerishableItemManufacturingCostZero() throws InvalidItemException {
+	public void testPerishableItemManufacturingCostZero() throws StockException {
 		perishable.setManufacturingCost(0);
 		double cost = perishable.getManufacturingCost();
 		
 		assertEquals(0, cost, 0.000);
 	}
 	
-	@Test(expected=InvalidItemException.class)
-	public void testPerishableItemManufacturingCostNegative() throws InvalidItemException {
+	@Test(expected=StockException.class)
+	public void testPerishableItemManufacturingCostNegative() throws StockException {
 		perishable.setManufacturingCost(-42);		
 	}
 	
 	@Test
-	public void testPerishableItemManufacturingCostBig() throws InvalidItemException {
+	public void testPerishableItemManufacturingCostBig() throws StockException {
 		perishable.setManufacturingCost(1000000);
 		double cost = perishable.getManufacturingCost();
 		
@@ -123,7 +113,7 @@ public class ItemTests {
 	
 	//PerishableItem SellPrice tests
 	@Test
-	public void testPerishableItemSellPrice() throws InvalidItemException {
+	public void testPerishableItemSellPrice() throws StockException {
 		perishable.setSellPrice(78.2);
 		double price = perishable.getSellPrice();
 		
@@ -131,7 +121,7 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testPerishableItemSellPriceWrong() throws InvalidItemException {
+	public void testPerishableItemSellPriceWrong() throws StockException {
 		perishable.setSellPrice(3);
 		double price = perishable.getSellPrice();
 		
@@ -139,7 +129,7 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testPerishableItemSellPriceZero() throws InvalidItemException {
+	public void testPerishableItemSellPriceZero() throws StockException {
 		perishable.setSellPrice(0);
 		double price = perishable.getSellPrice();
 		
@@ -147,22 +137,22 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testPerishableItemSellPriceBig() throws InvalidItemException {
+	public void testPerishableItemSellPriceBig() throws StockException {
 		perishable.setSellPrice(1000000);
 		double price = perishable.getSellPrice();
 		
 		assertEquals(1000000, price, 0.001);
 	}
 	
-	@Test(expected=InvalidItemException.class)
-	public void testPerishableItemSellPriceNegative() throws InvalidItemException {
+	@Test(expected=StockException.class)
+	public void testPerishableItemSellPriceNegative() throws StockException {
 		perishable.setSellPrice(-87.22);
 	}
 	//end PerishableItem SellPrice tests
 	
 	//PerishableItem reorderPoint tests
 	@Test
-	public void testPerishableItemreorderPoint() throws InvalidItemException {
+	public void testPerishableItemreorderPoint() throws StockException {
 		perishable.setReorderPoint(20);
 		int point = perishable.getReorderPoint();
 		
@@ -170,20 +160,20 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testPerishableItemreorderPointWrong() throws InvalidItemException {
+	public void testPerishableItemreorderPointWrong() throws StockException {
 		perishable.setReorderPoint(43);
 		int point = perishable.getReorderPoint();
 		
 		assertNotEquals(44, point);
 	}
 	
-	@Test(expected=InvalidItemException.class)
-	public void testPerishableItemreorderPointNegative() throws InvalidItemException {
+	@Test(expected=StockException.class)
+	public void testPerishableItemreorderPointNegative() throws StockException {
 		perishable.setReorderPoint(-2);
 	}
 	
 	@Test
-	public void testPerishableItemreorderPointZero() throws InvalidItemException {
+	public void testPerishableItemreorderPointZero() throws StockException {
 		perishable.setReorderPoint(0);
 		int point = perishable.getReorderPoint();
 		
@@ -191,7 +181,7 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testPerishableItemreorderPointBig() throws InvalidItemException {
+	public void testPerishableItemreorderPointBig() throws StockException {
 		perishable.setReorderPoint(1000000);
 		int point = perishable.getReorderPoint();
 		
@@ -201,7 +191,7 @@ public class ItemTests {
 	
 	//PerishableItem reorderAmount tests
 	@Test
-	public void testPerishableItemreorderAmount() throws InvalidItemException {
+	public void testPerishableItemreorderAmount() throws StockException {
 		perishable.setReorderAmount(400);
 		int amount = perishable.getReorderAmount();
 		
@@ -209,20 +199,20 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testPerishableItemreorderAmountWrong() throws InvalidItemException {
+	public void testPerishableItemreorderAmountWrong() throws StockException {
 		perishable.setReorderAmount(523);
 		int amount = perishable.getReorderAmount();
 		
 		assertNotEquals(323, amount);
 	}
 	
-	@Test(expected=InvalidItemException.class)
-	public void testPerishableItemreorderAmountNegative() throws InvalidItemException {
+	@Test(expected=StockException.class)
+	public void testPerishableItemreorderAmountNegative() throws StockException {
 		perishable.setReorderAmount(-52);
 	}
 	
 	@Test
-	public void testPerishableItemreorderAmountZero() throws InvalidItemException {
+	public void testPerishableItemreorderAmountZero() throws StockException {
 		perishable.setReorderAmount(0);
 		int amount = perishable.getReorderAmount();
 		
@@ -230,7 +220,7 @@ public class ItemTests {
 	}
 	
 	@Test
-	public void testPerishableItemreorderAmountBig() throws InvalidItemException {
+	public void testPerishableItemreorderAmountBig() throws StockException {
 		perishable.setReorderAmount(1000000);
 		int amount = perishable.getReorderAmount();
 		
@@ -240,20 +230,20 @@ public class ItemTests {
 	
 	//PerishableItem Temperature Tests
 	@Test
-	public void testPerishableItemTemperature() throws InvalidItemException {	
+	public void testPerishableItemTemperature() throws StockException {	
 		((PerishableItem) perishable).setTemperature(-14);
 		double temp = ((PerishableItem) perishable).getTemperature();
 		
 		assertEquals(-14,temp, 0.000);		
 	}
 	
-	@Test (expected=InvalidItemException.class)
-	public void testPerishableItemTemperatureTooCold() throws InvalidItemException {
+	@Test (expected=StockException.class)
+	public void testPerishableItemTemperatureTooCold() throws StockException {
 		((PerishableItem) perishable).setTemperature(-10000);
 	}
 	
-	@Test (expected=InvalidItemException.class)
-	public void testPerishableItemTemperatureTooHot() throws InvalidItemException {
+	@Test (expected=StockException.class)
+	public void testPerishableItemTemperatureTooHot() throws StockException {
 		((PerishableItem) perishable).setTemperature(100);
 	}	
 	//End PerishableItem Temperature Tests
@@ -262,20 +252,20 @@ public class ItemTests {
 	
 	//OrdinaryItem name tests
 		@Test
-		public void testOrdinaryName() throws InvalidItemException {
+		public void testOrdinaryName() throws StockException {
 			ordinary.setName("Chicken");
 			String name = ordinary.getName();
 			
 			assertEquals("Chicken", name);
 		}
 		
-		@Test(expected=InvalidItemException.class)
-		public void testOrdinaryNameEmpty() throws InvalidItemException {
+		@Test(expected=StockException.class)
+		public void testOrdinaryNameEmpty() throws StockException {
 			ordinary.setName("");		
 		}
 		
 		@Test
-		public void testOrdinaryNameNumber() throws InvalidItemException {
+		public void testOrdinaryNameNumber() throws StockException {
 			ordinary.setName("42");
 			String name = ordinary.getName();
 			
@@ -283,7 +273,7 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testLongOrdinaryName() throws InvalidItemException {
+		public void testLongOrdinaryName() throws StockException {
 			ordinary.setName("Verylongcerealbrandwithaverylongname"); 
 			String name = ordinary.getName();
 			
@@ -291,7 +281,7 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testShortOrdinaryName() throws InvalidItemException {
+		public void testShortOrdinaryName() throws StockException {
 			ordinary.setName("x");
 			String name = ordinary.getName();
 			
@@ -301,7 +291,7 @@ public class ItemTests {
 		
 		//OrdinaryItem manufacturtingCost tests
 		@Test
-		public void testOrdinaryItemManufacturingCost() throws InvalidItemException {
+		public void testOrdinaryItemManufacturingCost() throws StockException {
 			ordinary.setManufacturingCost(54.85);
 			double cost = ordinary.getManufacturingCost();
 			
@@ -309,7 +299,7 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testOrdinaryItemManufacturingCostWrong() throws InvalidItemException {
+		public void testOrdinaryItemManufacturingCostWrong() throws StockException {
 			ordinary.setManufacturingCost(43);
 			double cost = ordinary.getManufacturingCost();
 			
@@ -317,20 +307,20 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testOrdinaryItemManufacturingCostZero() throws InvalidItemException {
+		public void testOrdinaryItemManufacturingCostZero() throws StockException {
 			ordinary.setManufacturingCost(0);
 			double cost = ordinary.getManufacturingCost();
 			
 			assertEquals(0, cost, 0.000);
 		}
 		
-		@Test(expected=InvalidItemException.class)
-		public void testOrdinaryItemManufacturingCostNegative() throws InvalidItemException {
+		@Test(expected=StockException.class)
+		public void testOrdinaryItemManufacturingCostNegative() throws StockException {
 			ordinary.setManufacturingCost(-42);		
 		}
 		
 		@Test
-		public void testOrdinaryItemManufacturingCostBig() throws InvalidItemException {
+		public void testOrdinaryItemManufacturingCostBig() throws StockException {
 			ordinary.setManufacturingCost(1000000);
 			double cost = ordinary.getManufacturingCost();
 			
@@ -341,7 +331,7 @@ public class ItemTests {
 		
 		//OrdinaryItem SellPrice tests
 		@Test
-		public void testOrdinaryItemSellPrice() throws InvalidItemException {
+		public void testOrdinaryItemSellPrice() throws StockException {
 			ordinary.setSellPrice(78.2);
 			double price = ordinary.getSellPrice();
 			
@@ -349,7 +339,7 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testOrdinaryItemSellPriceWrong() throws InvalidItemException {
+		public void testOrdinaryItemSellPriceWrong() throws StockException {
 			ordinary.setSellPrice(3);
 			double price = ordinary.getSellPrice();
 			
@@ -357,7 +347,7 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testOrdinaryItemSellPriceZero() throws InvalidItemException {
+		public void testOrdinaryItemSellPriceZero() throws StockException {
 			ordinary.setSellPrice(0);
 			double price = ordinary.getSellPrice();
 			
@@ -365,22 +355,22 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testOrdinaryItemSellPriceBig() throws InvalidItemException {
+		public void testOrdinaryItemSellPriceBig() throws StockException {
 			ordinary.setSellPrice(1000000);
 			double price = ordinary.getSellPrice();
 			
 			assertEquals(1000000, price, 0.001);
 		}
 		
-		@Test(expected=InvalidItemException.class)
-		public void testOrdinaryItemSellPriceNegative() throws InvalidItemException {
+		@Test(expected=StockException.class)
+		public void testOrdinaryItemSellPriceNegative() throws StockException {
 			ordinary.setSellPrice(-87.22);
 		}
 		//end OrdinaryItem SellPrice tests
 		
 		//OrdinaryItem reorderPoint tests
 		@Test
-		public void testOrdinaryItemreorderPoint() throws InvalidItemException {
+		public void testOrdinaryItemreorderPoint() throws StockException {
 			ordinary.setReorderPoint(20);
 			int point = ordinary.getReorderPoint();
 			
@@ -388,20 +378,20 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testOrdinaryItemreorderPointWrong() throws InvalidItemException {
+		public void testOrdinaryItemreorderPointWrong() throws StockException {
 			ordinary.setReorderPoint(43);
 			int point = ordinary.getReorderPoint();
 			
 			assertNotEquals(44, point);
 		}
 		
-		@Test(expected=InvalidItemException.class)
-		public void testOrdinaryItemreorderPointNegative() throws InvalidItemException {
+		@Test(expected=StockException.class)
+		public void testOrdinaryItemreorderPointNegative() throws StockException {
 			ordinary.setReorderPoint(-2);
 		}
 		
 		@Test
-		public void testOrdinaryItemreorderPointZero() throws InvalidItemException {
+		public void testOrdinaryItemreorderPointZero() throws StockException {
 			ordinary.setReorderPoint(0);
 			int point = ordinary.getReorderPoint();
 			
@@ -409,7 +399,7 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testOrdinaryItemreorderPointBig() throws InvalidItemException {
+		public void testOrdinaryItemreorderPointBig() throws StockException {
 			ordinary.setReorderPoint(1000000);
 			int point = ordinary.getReorderPoint();
 			
@@ -419,7 +409,7 @@ public class ItemTests {
 		
 		//OrdinaryItem reorderAmount tests
 		@Test
-		public void testOrdinaryItemreorderAmount() throws InvalidItemException {
+		public void testOrdinaryItemreorderAmount() throws StockException {
 			ordinary.setReorderAmount(400);
 			int amount = ordinary.getReorderAmount();
 			
@@ -427,20 +417,20 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testOrdinaryItemreorderAmountWrong() throws InvalidItemException {
+		public void testOrdinaryItemreorderAmountWrong() throws StockException {
 			ordinary.setReorderAmount(523);
 			int amount = ordinary.getReorderAmount();
 			
 			assertNotEquals(323, amount);
 		}
 		
-		@Test(expected=InvalidItemException.class)
-		public void testOrdinaryItemreorderAmountNegative() throws InvalidItemException {
+		@Test(expected=StockException.class)
+		public void testOrdinaryItemreorderAmountNegative() throws StockException {
 			ordinary.setReorderAmount(-52);
 		}
 		
 		@Test
-		public void testOrdinaryItemreorderAmountZero() throws InvalidItemException {
+		public void testOrdinaryItemreorderAmountZero() throws StockException {
 			ordinary.setReorderAmount(0);
 			int amount = ordinary.getReorderAmount();
 			
@@ -448,7 +438,7 @@ public class ItemTests {
 		}
 		
 		@Test
-		public void testOrdinaryItemreorderAmountBig() throws InvalidItemException {
+		public void testOrdinaryItemreorderAmountBig() throws StockException {
 			ordinary.setReorderAmount(1000000);
 			int amount = ordinary.getReorderAmount();
 			

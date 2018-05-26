@@ -12,7 +12,7 @@ import delivery.OrdinaryTruck;
 import delivery.RefrigeratedTruck;
 import delivery.Truck;
 import exception.CSVFormatException;
-import exception.InvalidItemException;
+import exception.DeliveryException;
 import exception.StockException;
 import stock.Item;
 import stock.OrdinaryItem;
@@ -44,7 +44,7 @@ public class Reader {
 		if (line != null) {
 			info = line.split(",");
 			
-			if (line.length() != 2) {
+			if (info.length != 2) {
 				br.close();
 				throw new CSVFormatException("Expected two values, but got " + line.length());
 			}
@@ -60,9 +60,8 @@ public class Reader {
 	 * @param file The item properties file.
 	 * @return Stock object representing every item in the file.
 	 * @throws IOException Throws if there is an error reading the file.
-	 * @throws InvalidItemException Throws if there is an invalid item in the file.
 	 */
-	public static Stock ReadItemPropertiesFromCSV(String file) throws IOException, InvalidItemException {
+	public static Stock ReadItemPropertiesFromCSV(String file) throws IOException, StockException {
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		
@@ -140,11 +139,11 @@ public class Reader {
 	 * @return Manifest object representing all of the trucks and their cargo.
 	 * @throws IOException Throws if there is an error reading from the file.
 	 * @throws NumberFormatException Throws if a number is formated incorrectly.
-	 * @throws InvalidItemException Throws if there is an invalid item in the file.
 	 * @throws StockException Throws if there is an issue adding cargo to the truck.
 	 * @throws CSVFormatException Throws if the CSV is formatted incorrectly.
+	 * @throws DeliveryException Throws if there is an invalid item in the file.
 	 */
-	public static Manifest ReadManifestFromCSV(String file) throws IOException, NumberFormatException, InvalidItemException, StockException, CSVFormatException {
+	public static Manifest ReadManifestFromCSV(String file) throws IOException, NumberFormatException, StockException, CSVFormatException, DeliveryException {
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		

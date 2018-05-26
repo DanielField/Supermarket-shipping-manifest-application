@@ -3,7 +3,6 @@ package stock;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import exception.InvalidItemException;
 import exception.StockException;
 
 /**
@@ -46,11 +45,11 @@ public class Stock extends ArrayList<ItemStock> {
 	 * @param i Item to be added.
 	 * @param initialQuantity Initial quantity for the item.
 	 * @return The newly created ItemStock object.
-	 * @throws InvalidItemException Throws when the item already exists.
+	 * @throws StockException Throws when the item already exists.
 	 */
-	public ItemStock addNewItem(Item i, int initialQuantity) throws InvalidItemException {
+	public ItemStock addNewItem(Item i, int initialQuantity) throws StockException {
 		if (ItemExists(i)) {
-			throw new InvalidItemException("Item already exists");
+			throw new StockException("Item already exists");
 		}
 		ItemStock is = new ItemStock(ItemStock.generateID(stock), i, initialQuantity);
 		stock.add(is);
@@ -116,15 +115,15 @@ public class Stock extends ArrayList<ItemStock> {
 	 * 
 	 * @param itemID ID of the item.
 	 * @return The ItemStock object.
-	 * @throws InvalidItemException Throw if the item does not exist.
+	 * @throws StockException Throw if the item does not exist.
 	 */
-	public ItemStock getItemStock(int itemID) throws InvalidItemException {
+	public ItemStock getItemStock(int itemID) throws StockException {
 		for (ItemStock itemStock : stock) {
 			if (itemStock.getItemID() == itemID) {
 				return itemStock;
 			}
 		}
-		throw new InvalidItemException("Item does not exist.");
+		throw new StockException("Item does not exist.");
 	}
 	
 	/**
@@ -132,15 +131,15 @@ public class Stock extends ArrayList<ItemStock> {
 	 * 
 	 * @param itemID ID of the item.
 	 * @return The ItemStock object.
-	 * @throws InvalidItemException Throw if the item does not exist.
+	 * @throws StockException Throw if the item does not exist.
 	 */
-	public ItemStock getItemStock(Item item) throws InvalidItemException {
+	public ItemStock getItemStock(Item item) throws StockException {
 		for (ItemStock itemStock : stock) {
 			if (itemStock.getItem() == item) {
 				return itemStock;
 			}
 		}
-		throw new InvalidItemException("Item does not exist.");
+		throw new StockException("Item does not exist.");
 	}
 	
 	/**
@@ -148,15 +147,15 @@ public class Stock extends ArrayList<ItemStock> {
 	 * 
 	 * @param name Name of the item.
 	 * @return The ItemStock object.
-	 * @throws InvalidItemException Throw if the item does not exist.
+	 * @throws StockException Throw if the item does not exist.
 	 */
-	public ItemStock getItemStock(String name) throws InvalidItemException {
+	public ItemStock getItemStock(String name) throws StockException {
 		for (ItemStock itemStock : stock) {
 			if (itemStock.getItem().getName().toLowerCase().equals(name.toLowerCase())) {
 				return itemStock;
 			}
 		}
-		throw new InvalidItemException("Item does not exist.");
+		throw new StockException("Item does not exist.");
 	}
 
 	/**

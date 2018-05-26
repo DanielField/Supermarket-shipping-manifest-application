@@ -23,7 +23,7 @@ import delivery.OrdinaryTruck;
 import delivery.RefrigeratedTruck;
 import delivery.Truck;
 import exception.CSVFormatException;
-import exception.InvalidItemException;
+import exception.DeliveryException;
 import exception.StockException;
 import stock.Item;
 import stock.ItemStock;
@@ -79,7 +79,7 @@ public class MainPanel extends JPanel {
 			LoadStoreInformation(Strings.STORE_INFO_CSV);
 			status += "Store information loaded into memory.\r\n";
 		} catch (IOException e) {
-			status += "Unable to load the store information file. Setting the information to default.\\r\\n";
+			status += "Unable to load the store information file. Setting the information to default.\r\n";
 			
 		} catch (CSVFormatException e) {
 			status += e.getMessage();
@@ -90,8 +90,8 @@ public class MainPanel extends JPanel {
 			status += "Inventory loaded into memory.\r\n";
 		} catch (IOException ioe) {
 			status += "Unable to load the inventory.\r\n";
-		} catch (InvalidItemException iie) {
-			status += "One or more items in the inventory file are invalid.\\r\\n";
+		} catch (StockException se) {
+			status += "One or more items in the inventory file are invalid.\r\n";
 		}
 
 		InitialiseLabels();
@@ -106,10 +106,10 @@ public class MainPanel extends JPanel {
 			ExportManifest();
 		} catch (IOException e) {
 			status += "Unable to export the manifest to the specified file.\r\n";
-		} catch (InvalidItemException e) {
-			status += "There was an issue with one or more of the items.\r\n";
 		} catch (StockException e) {
-			status += "There was an issue regarding the cargo of one or more trucks.\r\n";
+			status += "There was an issue regarding the Items.\r\n";
+		} catch (DeliveryException e) {
+			status += "There was an issue regarding one or more trucks.\r\n";
 		}
 		
 		PopulateInventory();
@@ -135,9 +135,9 @@ public class MainPanel extends JPanel {
 	 * 
 	 * @param file The item properties CSV file.
 	 * @throws IOException Throws when there is an issue reading the file.
-	 * @throws InvalidItemException Throws when an item is invalid.
+	 * @throws StockException Throws when an item is invalid.
 	 */
-	private void LoadItemProperties(String file) throws IOException, InvalidItemException {
+	private void LoadItemProperties(String file) throws IOException, StockException {
 		itemProperties = Reader.ReadItemPropertiesFromCSV(file);
 		Object[][] inventory = new Object[itemProperties.size()][7];
 
@@ -163,11 +163,11 @@ public class MainPanel extends JPanel {
 	 * @param file The manifest CSV file.
 	 * @throws IOException Throws when there is an issue attempting to read the specified file.
 	 * @throws NumberFormatException Throws when there is an invalid number format.
-	 * @throws InvalidItemException Throws when one of the items is invalid.
 	 * @throws StockException Throws when there is an issue adding an item to the cargo of a truck.
 	 * @throws CSVFormatException Throws if the CSV is formatted incorrectly.
+	 * @throws DeliveryException Throws if there is an issue with the trucks.
 	 */
-	private void LoadManifest(String file) throws IOException, NumberFormatException, InvalidItemException, StockException, CSVFormatException {
+	private void LoadManifest(String file) throws IOException, NumberFormatException, StockException, CSVFormatException, DeliveryException {
 		manifest = Reader.ReadManifestFromCSV(file);
 		
 		// For each truck in the manifest
@@ -212,10 +212,10 @@ public class MainPanel extends JPanel {
 	 * Construct a manifest based on the inventory.
 	 * 
 	 * @return New manifest object.
-	 * @throws InvalidItemException Throws if there is an invalid item.
 	 * @throws StockException Throws if there is an invalid item being added to the cargo of a truck.
+	 * @throws DeliveryException Throws if there is an issue with the truck cargo.
 	 */
-	private Manifest ConstructManifestFromInventory() throws InvalidItemException, StockException {
+	private Manifest ConstructManifestFromInventory() throws StockException, DeliveryException {
 		Manifest m = new Manifest();
 		Truck ordinaryTruck = new OrdinaryTruck();
 		Truck refrigeratedTruck = new RefrigeratedTruck();
@@ -278,9 +278,9 @@ public class MainPanel extends JPanel {
 	 * 
 	 * @throws IOException Throws if there is an error attempting to write the file
 	 * @throws StockException Throws if there is an error relating to Stock
-	 * @throws InvalidItemException Throws if there is an invalid item
+	 * @throws DeliveryException Throws if there is a truck issue.
 	 */
-	private void ExportManifest() throws IOException, InvalidItemException, StockException {
+	private void ExportManifest() throws IOException, StockException, DeliveryException {
 		Manifest m = ConstructManifestFromInventory();
 		Writer.WriteManifestToCSV(Strings.MANIFEST_CSV, m);
 	}
@@ -291,9 +291,9 @@ public class MainPanel extends JPanel {
 	 * @param file The file to which the manifest is written.
 	 * @throws IOException Throws if there is an error attempting to write the file
 	 * @throws StockException Throws if there is an error relating to Stock
-	 * @throws InvalidItemException Throws if there is an invalid item
+	 * @throws DeliveryException  Throws if there is a truck issue.
 	 */
-	private void ExportManifest(String file) throws IOException, InvalidItemException, StockException {
+	private void ExportManifest(String file) throws IOException, StockException, DeliveryException {
 		Manifest m = ConstructManifestFromInventory();
 		Writer.WriteManifestToCSV(file, m);
 	}
@@ -381,12 +381,12 @@ public class MainPanel extends JPanel {
 						txtStatus.append("One or more of the quantities of the manifest file are invalid.\r\n");
 					} catch (IOException e1) {
 						txtStatus.append("There was an issue attempting to load the specified file.\r\n");
-					} catch (InvalidItemException e1) {
-						txtStatus.append("One or more of the items are invalid.\r\n");
 					} catch (StockException e1) {
 						txtStatus.append("There was an issue attempting to load the stock of a truck.\r\n");
 					} catch (CSVFormatException e1) {
 						txtStatus.append("The CSV specified is not formatted correctly.\r\n");
+					} catch (DeliveryException e1) {
+						txtStatus.append(e1.getMessage() + "\r\n");
 					}
 					
 					PopulateInventory();
@@ -416,10 +416,10 @@ public class MainPanel extends JPanel {
 						txtStatus.append("Exported manifest based on current inventory.\r\n");
 					} catch (IOException ex) {
 						txtStatus.append("Unable to export the manifest to the specified file.\r\n");
-					} catch (InvalidItemException ex) {
-						txtStatus.append("There was an issue with one or more of the items.\r\n");
 					} catch (StockException ex) {
 						txtStatus.append("There was an issue regarding the cargo of one or more trucks.\r\n");
+					} catch (DeliveryException ex) {
+						txtStatus.append(ex.getMessage() + "\r\n");
 					}
 					
 				} else {
@@ -466,8 +466,8 @@ public class MainPanel extends JPanel {
 								Utils.FormatDollars(store.getCapital())));
 					} catch (IOException ex) {
 						txtStatus.append("There was an error attempting to read the specified sales log.\r\n");
-					} catch (InvalidItemException ex) {
-						txtStatus.append("One or more items are invalid.\r\n");
+					} catch (StockException e1) {
+						txtStatus.append(e1.getMessage() + "\r\n");
 					}
 				} else {
 					txtStatus.append("Import cancelled.\r\n");
@@ -508,12 +508,12 @@ public class MainPanel extends JPanel {
 			status += "One or more of the quantities of the manifest file are invalid.\r\n";
 		} catch (IOException e1) {
 			status += "There was an issue attempting to load the default manifest file.\r\n";
-		} catch (InvalidItemException e1) {
-			status += "One or more of the items are invalid.\r\n";
 		} catch (StockException e1) {
 			status += "There was an issue attempting to load the stock of a truck.\r\n";
 		} catch (CSVFormatException e1) {
 			status += "The CSV specified is not formatted correctly.\r\n";
+		} catch (DeliveryException e1) {
+			txtStatus.append(e1.getMessage() + "\r\n");
 		}
 		
 		layout.putConstraint(SpringLayout.NORTH, spInventory, 10, SpringLayout.NORTH, this);

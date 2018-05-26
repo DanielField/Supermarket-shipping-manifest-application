@@ -7,7 +7,6 @@ import supermart.Sale;
 import supermart.SaleList;
 
 import org.junit.Before;
-import exception.InvalidItemException;
 import exception.StockException;
 
 
