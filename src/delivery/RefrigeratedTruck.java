@@ -14,7 +14,7 @@ import stock.Stock;
  * Class which extends Truck to create a specific truck for perishable items.
  * 
  * @author Daniel Field
- *
+ * @author Allen Basic
  */
 public class RefrigeratedTruck extends Truck {
 

@@ -6,6 +6,7 @@ import exception.StockException;
  * An abstract class which represents an item.
  *
  * @author Daniel Field
+ * @author Allen Basic
  */
 public abstract class Item {		
 	/**

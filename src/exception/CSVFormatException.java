@@ -4,20 +4,24 @@
 package exception;
 
 /**
+ * Occurs when there is an issue with formatting in a comma separated values (CSV) file.
+ * 
  * @author Daniel Field
- *
+ * @author Allen Basic
  */
 public class CSVFormatException extends Exception {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * 
+	 * Construct the exception object.
 	 */
 	public CSVFormatException() {
 		// TODO Auto-generated constructor stub
 	}
 
 	/**
+	 * Construct the exception object.
+	 * 
 	 * @param message
 	 */
 	public CSVFormatException(String message) {
@@ -26,6 +30,8 @@ public class CSVFormatException extends Exception {
 	}
 
 	/**
+	 * Construct the exception object.
+	 * 
 	 * @param cause
 	 */
 	public CSVFormatException(Throwable cause) {
@@ -34,6 +40,8 @@ public class CSVFormatException extends Exception {
 	}
 
 	/**
+	 * Construct the exception object.
+	 * 
 	 * @param message
 	 * @param cause
 	 */
@@ -43,6 +51,8 @@ public class CSVFormatException extends Exception {
 	}
 
 	/**
+	 * Construct the exception object.
+	 * 
 	 * @param message
 	 * @param cause
 	 * @param enableSuppression

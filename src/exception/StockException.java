@@ -7,7 +7,7 @@ package exception;
  * Occurs when there is an issue regarding the Stock class.
  * 
  * @author Daniel Field
- *
+ * @author Allen Basic
  */
 public class StockException extends Exception {
 	private static final long serialVersionUID = 1L;
@@ -20,6 +20,8 @@ public class StockException extends Exception {
 	}
 
 	/**
+	 * Construct a stock exception
+	 * 
 	 * @param message
 	 */
 	public StockException(String message) {
@@ -28,6 +30,8 @@ public class StockException extends Exception {
 	}
 
 	/**
+	 * Construct a stock exception
+	 * 
 	 * @param cause
 	 */
 	public StockException(Throwable cause) {
@@ -36,6 +40,8 @@ public class StockException extends Exception {
 	}
 
 	/**
+	 * Construct a stock exception
+	 * 
 	 * @param message
 	 * @param cause
 	 */
@@ -45,6 +51,8 @@ public class StockException extends Exception {
 	}
 
 	/**
+	 * Construct a stock exception
+	 * 
 	 * @param message
 	 * @param cause
 	 * @param enableSuppression

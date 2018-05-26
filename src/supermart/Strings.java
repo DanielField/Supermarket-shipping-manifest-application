@@ -7,7 +7,7 @@ package supermart;
  * Class to store constant strings.
  * 
  * @author Daniel Field
- *
+ * @author Allen Basic
  */
 public class Strings {
 	/**

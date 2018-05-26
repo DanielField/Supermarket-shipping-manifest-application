@@ -11,7 +11,7 @@ import stock.Stock;
  * Class which extends Truck to create a specific truck for ordinary items.
  * 
  * @author Daniel Field
- *
+ * @author Allen Basic
  */
 public class OrdinaryTruck extends Truck {
 

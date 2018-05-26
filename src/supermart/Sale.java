@@ -8,6 +8,7 @@ import exception.StockException;
 /**
  * Sale class that stores a single store sale.
  * 
+ * @author Daniel Field
  * @author Allen Basic
  */
 public class Sale {

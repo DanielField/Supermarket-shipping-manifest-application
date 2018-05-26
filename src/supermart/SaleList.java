@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * Holds a list of sales.
  * 
+ * @author Daniel Field
  * @author Allen Basic
  */
 public class SaleList {

@@ -8,7 +8,7 @@ import java.util.List;
  * This class represents a collection of trucks.
  * 
  * @author Daniel Field
- *
+ * @author Allen Basic
  */
 public class Manifest extends AbstractList<Truck> {
 
