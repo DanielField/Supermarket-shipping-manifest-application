@@ -50,6 +50,8 @@ public class Stock extends ArrayList<ItemStock> {
 	public ItemStock addNewItem(Item i, int initialQuantity) throws StockException {
 		if (ItemExists(i)) {
 			throw new StockException("Item already exists");
+		} else if (i == null) {
+			throw new StockException("Null item");
 		}
 		ItemStock is = new ItemStock(ItemStock.generateID(stock), i, initialQuantity);
 		stock.add(is);
@@ -232,6 +234,14 @@ public class Stock extends ArrayList<ItemStock> {
 	@Override
 	public ItemStock get(int index) {
 		return stock.get(index);
+	}
+	
+	/* (non-Javadoc)
+	 * @see java.util.ArrayList#contains(java.lang.Object)
+	 */
+	@Override
+	public boolean contains(Object o) {
+		return stock.contains(o);
 	}
 	
 	/* (non-Javadoc)

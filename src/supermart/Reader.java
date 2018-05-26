@@ -108,8 +108,10 @@ public class Reader {
 	 * @param file The sales log file.
 	 * @return SaleList containing the data from the sales log.
 	 * @throws IOException Throws if there is an error reading the file.
+	 * @throws StockException Throws if the quantity is below zero for an item.
+	 * @throws NumberFormatException Throws if the numbers are formatted incorrectly.
 	 */
-	public static SaleList ReadSalesFromCSV(String file) throws IOException {
+	public static SaleList ReadSalesFromCSV(String file) throws IOException, NumberFormatException, StockException {
 		FileReader fr = new FileReader(file);
 		BufferedReader br = new BufferedReader(fr);
 		

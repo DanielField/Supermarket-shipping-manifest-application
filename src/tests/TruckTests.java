@@ -72,7 +72,7 @@ public class TruckTests {
 		ordinaryTruck.addToCargo(cargo);
 	}
 	
-	@Test (expected = StockException.class)
+	@Test (expected = DeliveryException.class)
 	public void testAddMillionOrdinaryItemToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item canOfSoup = new OrdinaryItem(null, 0, 0, 0, 0);
@@ -113,7 +113,7 @@ public class TruckTests {
 		assertNotEquals(89, refrigeratedTruck.getTotalCargo());
 	}
 	
-	@Test
+	@Test (expected = DeliveryException.class)
 	public void testAddZeroPerishableItemToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item icecream = new PerishableItem(null, 0, 0, 0, 0, 0);
@@ -123,10 +123,9 @@ public class TruckTests {
 		cargo.addNewItem(FrozenPizza, 0);
 		
 		refrigeratedTruck.addToCargo(cargo);
-		assertEquals(0, refrigeratedTruck.getTotalCargo());
 	}
 	
-	@Test (expected = StockException.class)
+	@Test (expected = DeliveryException.class)
 	public void testAddMillionPerishableItemToCargo() throws DeliveryException, StockException {
 		Stock cargo = new Stock();
 		Item icecream = new PerishableItem(null, 0, 0, 0, 0, 0);
@@ -307,7 +306,7 @@ public class TruckTests {
 	}
 	
 	@Test
-	public void testRemoveThanGetCost() throws DeliveryException, StockException {
+	public void testRemoveThenGetCost() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem("Cookie", 0, 0, 0, 0);
 		// Add 24 cookies to the cargo
 		ordinaryTruck.addToCargo(cookie, 24);
@@ -315,25 +314,24 @@ public class TruckTests {
 		ordinaryTruck.removeFromCargo(cookie, 12);
 		
 		double cost = ordinaryTruck.getCost();
-		assertEquals(378.0, cost, 0.00001);
+		assertEquals(753.0, cost, 0);
 	}
 	
 	@Test
-	public void testRemoveThanGetCostRefrigerated() throws DeliveryException, StockException {
+	public void testRemoveThenGetCostRefrigerated() throws DeliveryException, StockException {
 		Item icecream = new PerishableItem("icecream", 0, 0, 0, 0, -12);
-		// Add 24 cookies to the cargo
 		refrigeratedTruck.addToCargo(icecream, 40);
-		// remove half the cookies from cargo
 		refrigeratedTruck.removeFromCargo(icecream, 40);
 		
-		double cost = ordinaryTruck.getCost();
-		assertEquals(0, cost, 0.00000);
+		double cost = refrigeratedTruck.getCost();
+		// 900 + 200 * 0.7^(T/5)
+		assertEquals(1380.9376945893334, cost, 0.00000);
 	}
 	
 	//END test getCost Methods for both trucks
 	
 	//Ordinary and Refrigerated Truck getCapacity tests
-	@Test (expected = StockException.class)
+	@Test (expected = DeliveryException.class)
 	public void testGetCapacityMillion() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
 		ordinaryTruck.addToCargo(cookie, 1000000);					
@@ -399,17 +397,8 @@ public class TruckTests {
 		int total = ordinaryTruck.getTotalCargo();		
 		assertNotEquals(24, total);	
 	}
-			
-	@Test
-	public void testGetTotalCargoOrdinaryTruckZero() throws DeliveryException, StockException {
-		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
-		ordinaryTruck.addToCargo(cookie, 0);
 	
-		double capacity = ordinaryTruck.getTotalCargo();
-		assertEquals(0, capacity, 0.001);
-	}
-	
-	@Test (expected = StockException.class)
+	@Test (expected = DeliveryException.class)
 	public void testGetTotalCargoOrdinaryTruckMillion() throws DeliveryException, StockException {
 		Item cookie = new OrdinaryItem(null, 0, 0, 0, 0);
 		ordinaryTruck.addToCargo(cookie, 50000);
@@ -442,22 +431,21 @@ public class TruckTests {
 		assertNotEquals(24, total);	
 	}
 			
-	@Test
+	@Test (expected = DeliveryException.class)
 	public void testGetTotalCargoRefrigeratedTruckZero() throws DeliveryException, StockException {
 		Item Icecream = new PerishableItem("Icecream", 0, 0, 0, 0, -12);
 		refrigeratedTruck.addToCargo(Icecream, 0);
 	
 		double capacity = refrigeratedTruck.getTotalCargo();
-		assertEquals(0, capacity, 0.001);
 	}
 	
-	@Test (expected = StockException.class)
+	@Test (expected = DeliveryException.class)
 	public void testGetTotalCargoRefrigeratedTruckMillion() throws DeliveryException, StockException {
 		Item Icecream = new PerishableItem("Icecream", 0, 0, 0, 0, -12);
 		refrigeratedTruck.addToCargo(Icecream, 50000);
 	}
 	
-	@Test (expected = StockException.class)
+	@Test (expected = DeliveryException.class)
 	public void testGetTotalCargoRefrigeratedTruckNegative() throws DeliveryException, StockException {
 		Item Icecream = new PerishableItem("Icecream", 0, 0, 0, 0, -12);
 		refrigeratedTruck.addToCargo(Icecream, -55);

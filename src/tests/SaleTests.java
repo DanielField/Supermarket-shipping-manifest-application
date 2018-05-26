@@ -2,6 +2,8 @@ package tests;
 
 import static org.junit.Assert.*;
 
+import java.util.NoSuchElementException;
+
 import org.junit.Test;
 import supermart.Sale;
 import supermart.SaleList;
@@ -214,14 +216,6 @@ public class SaleTests {
 		
 		assertEquals(sale, list.iterator().next());		
 	}
-	/**
-	 * test the iterator.next on an empty list
-	 * @throws StockException
-	 */
-	@Test (expected = StockException.class)
-	public void testIteratorNextEmptyList() throws StockException {
-		SaleList list = new SaleList();		
-	}
 	
 	/**
 	 * testing to see if iterator.hasnext method works as intended after removing sale
@@ -241,7 +235,7 @@ public class SaleTests {
 		assertFalse(list.iterator().hasNext());
 	}
 	
-	@Test
+	@Test (expected = NoSuchElementException.class)
 	public void testNextWithRemove() throws StockException {
 		Sale sale = new Sale();
 		SaleList list = new SaleList();
@@ -252,7 +246,7 @@ public class SaleTests {
 		list.add(sale);
 		assertEquals(sale ,list.iterator().next());
 		list.remove(sale);
-		assertFalse(sale == list.iterator().next());
+		list.iterator().next(); // No such element
 	}
 	
 	/**
@@ -343,10 +337,7 @@ public class SaleTests {
 		SaleList list = new SaleList();
 		
 		sale.setItemName("BunchOfApples");
-		sale.setQuantity(70);
-		list.add(sale);	
-		int newQuantity = sale.getQuantity() + -52;
-		sale.setQuantity(newQuantity);
+		sale.setQuantity(-70);
 	}
 	
 	/**
@@ -509,7 +500,7 @@ public class SaleTests {
 	}
 	
 	/**
-	 * testing a sale of empty quantity and no name
+	 * testing a sale with no name
 	 * @throws StockException: any sale with no name shouldnt exist
 	 */
 	@Test (expected = StockException.class)
@@ -519,20 +510,6 @@ public class SaleTests {
 		
 		sale.setItemName("");
 		sale.setQuantity(72);		
-		list.add(sale);
-	}
-	
-	/**
-	 * testing a sale of empty quantity and no name
-	 * @throws StockException: any sale with a number as a name shouldnt exist
-	 */
-	@Test (expected = StockException.class)
-	public void testSaleItemNameNumber() throws StockException {
-		Sale sale = new Sale();
-		SaleList list = new SaleList();
-		
-		sale.setItemName("369");
-		sale.setQuantity(20);		
 		list.add(sale);
 	}
 	

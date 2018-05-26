@@ -87,7 +87,10 @@ public class OrdinaryItem extends Item {
 	/* (non-Javadoc)
 	 * @see stock.Item#setManufacturingCost(double)
 	 */
-	public void setManufacturingCost(double manufacturingCost) {
+	public void setManufacturingCost(double manufacturingCost) throws StockException {
+		if (manufacturingCost < 0)
+			throw new StockException();
+		
 		this.manufacturingCost = manufacturingCost;
 	}
 	
@@ -101,7 +104,10 @@ public class OrdinaryItem extends Item {
 	/* (non-Javadoc)
 	 * @see stock.Item#setSellPrice(double)
 	 */
-	public void setSellPrice(double sellPrice) {
+	public void setSellPrice(double sellPrice) throws StockException {
+		if (sellPrice < 0) 
+			throw new StockException();
+		
 		this.sellPrice = sellPrice;
 	}
 	
@@ -115,7 +121,10 @@ public class OrdinaryItem extends Item {
 	/* (non-Javadoc)
 	 * @see stock.Item#setReorderPoint(int)
 	 */
-	public void setReorderPoint(int reorderPoint) {
+	public void setReorderPoint(int reorderPoint) throws StockException {
+		if (reorderPoint < 0) 
+			throw new StockException();
+		
 		this.reorderPoint = reorderPoint;
 	}
 	
@@ -129,7 +138,10 @@ public class OrdinaryItem extends Item {
 	/* (non-Javadoc)
 	 * @see stock.Item#setReorderAmount(int)
 	 */
-	public void setReorderAmount(int reorderAmount) {
+	public void setReorderAmount(int reorderAmount) throws StockException {
+		if (reorderAmount < 0) 
+			throw new StockException();
+		
 		this.reorderAmount = reorderAmount;
 	}
 }

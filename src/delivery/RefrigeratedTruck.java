@@ -92,6 +92,9 @@ public class RefrigeratedTruck extends Truck {
 	 */
 	@Override
 	public void addToCargo(Item item, int quantity) throws DeliveryException, StockException {
+		if (quantity < 1 || quantity > capacity + getTotalCargo())
+			throw new DeliveryException("Quantity is invalid. Must be one or higher and less than the capacity.");
+		
 		if (item.getClass() == PerishableItem.class) {
 			if ((((PerishableItem)item).getTemperature() >= temperature && ((PerishableItem)item).getTemperature() <= 10) == false)
 				throw new DeliveryException("Item temperature is not valid for this truck.");

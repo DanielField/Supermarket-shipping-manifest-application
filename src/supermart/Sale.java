@@ -3,6 +3,8 @@
  */
 package supermart;
 
+import exception.StockException;
+
 /**
  * Sale class that stores a single store sale.
  * 
@@ -25,8 +27,12 @@ public class Sale {
 	 * Set the item name.
 	 * 
 	 * @param item name
+	 * @throws StockException Throws if the string length is zero.
 	 */
-	public void setItemName(String item) {
+	public void setItemName(String item) throws StockException {
+		if (item.length() == 0)
+			throw new StockException();
+		
 		this.itemName = item;
 	}
 	
@@ -43,8 +49,12 @@ public class Sale {
 	 * Set the quantity.
 	 * 
 	 * @param quantity
+	 * @throws StockException Throws if the quantity is below one.
 	 */
-	public void setQuantity(int quantity) {
+	public void setQuantity(int quantity) throws StockException {
+		if (quantity <= 0)
+			throw new StockException();
+		
 		this.quantity = quantity;
 	}
 }

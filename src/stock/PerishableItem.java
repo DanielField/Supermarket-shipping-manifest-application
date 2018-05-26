@@ -93,7 +93,10 @@ public class PerishableItem extends Item {
 	/* (non-Javadoc)
 	 * @see stock.Item#setManufacturingCost(double)
 	 */
-	public void setManufacturingCost(double manufacturingCost) {
+	public void setManufacturingCost(double manufacturingCost) throws StockException {
+		if (manufacturingCost < 0) 
+			throw new StockException();
+		
 		this.manufacturingCost = manufacturingCost;
 	}
 	
@@ -107,7 +110,10 @@ public class PerishableItem extends Item {
 	/* (non-Javadoc)
 	 * @see stock.Item#setSellPrice(double)
 	 */
-	public void setSellPrice(double sellPrice) {
+	public void setSellPrice(double sellPrice) throws StockException {
+		if (sellPrice < 0) 
+			throw new StockException();
+		
 		this.sellPrice = sellPrice;
 	}
 	
@@ -121,7 +127,10 @@ public class PerishableItem extends Item {
 	/* (non-Javadoc)
 	 * @see stock.Item#setReorderPoint(int)
 	 */
-	public void setReorderPoint(int reorderPoint) {
+	public void setReorderPoint(int reorderPoint) throws StockException {
+		if (reorderPoint < 0) 
+			throw new StockException();
+		
 		this.reorderPoint = reorderPoint;
 	}
 	
@@ -135,7 +144,10 @@ public class PerishableItem extends Item {
 	/* (non-Javadoc)
 	 * @see stock.Item#setReorderAmount(int)
 	 */
-	public void setReorderAmount(int reorderAmount) {
+	public void setReorderAmount(int reorderAmount) throws StockException {
+		if (reorderAmount < 0) 
+			throw new StockException();
+		
 		this.reorderAmount = reorderAmount;
 	}
 	
@@ -152,8 +164,12 @@ public class PerishableItem extends Item {
 	 * Set the safe temperature of the item.
 	 * 
 	 * @param temperature The specified temperature to set.
+	 * @throws StockException Throws if the temperature is below -99 or above 99
 	 */
-	public void setTemperature(double temperature) {
+	public void setTemperature(double temperature) throws StockException {
+		if (temperature < -99 || temperature > 99) 
+			throw new StockException();
+		
 		this.temperature = temperature;
 	}
 }

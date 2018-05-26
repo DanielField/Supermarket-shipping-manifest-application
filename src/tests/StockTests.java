@@ -145,10 +145,10 @@ public class StockTests {
 
 	@Test
 	public void testGetOrdinaryItemByName() throws StockException {
-		Item apple = new OrdinaryItem(null, 0, 0, 0, 0);
+		Item apple = new OrdinaryItem("icecream", 0, 0, 0, 0);
 		ItemStock is = stock.addNewItem(apple, 300);	
 		
-		String item = is.getItem().getName() ;
+		String item = is.getItem().getName();
 		
 		assertEquals(item, "icecream");
 	}	
@@ -230,11 +230,13 @@ public class StockTests {
 		assertNotEquals(20, stock.stockTotal());
 	}
 	
-	@Test (expected = StockException.class)
+	@Test
 	public void testOrdinaryIncreaseQuantityNegative() throws StockException {
 		Item apple = new OrdinaryItem(null, 0, 0, 0, 0);
 		ItemStock is = stock.addNewItem(apple, 300);		
 		stock.increaseQuantity(is.getItemID(), -20);
+		
+		assertEquals(280, stock.getItemStock(is.getItemID()).getQuantity());
 	}
 	
 	@Test
@@ -276,11 +278,13 @@ public class StockTests {
 		assertNotEquals(20, stock.stockTotal());
 	}
 	
-	@Test (expected = StockException.class)
+	@Test
 	public void testPerishableIncreaseQuantityNegative() throws StockException {
 		Item icecream = new PerishableItem(null, 0, 0, 0, 0, -12);
 		ItemStock is = stock.addNewItem(icecream, 40);		
 		stock.increaseQuantity(is.getItemID(), -20);
+		
+		assertEquals(20, stock.getItemStock(is.getItemID()).getQuantity());
 	}
 	
 	@Test
@@ -322,11 +326,13 @@ public class StockTests {
 		assertNotEquals(180, stock.stockTotal());
 	}
 	
-	@Test (expected = StockException.class)
+	@Test
 	public void testOrdinaryDecreaseQuantityNegative() throws StockException {
 		Item apple = new OrdinaryItem(null, 0, 0, 0, 0);
 		ItemStock is = stock.addNewItem(apple, 300);		
 		stock.decreaseQuantity(is.getItemID(), -20);
+		
+		assertEquals(320, stock.getItemStock(is.getItemID()).getQuantity());
 	}
 	
 	@Test
@@ -367,11 +373,13 @@ public class StockTests {
 		assertNotEquals(180, stock.stockTotal());
 	}
 	
-	@Test (expected = StockException.class)
+	@Test
 	public void testPerishableDecreaseQuantityNegative() throws StockException {
 		Item icecream = new PerishableItem(null, 0, 0, 0, 0, -12);
 		ItemStock is = stock.addNewItem(icecream, 40);		
 		stock.decreaseQuantity(is.getItemID(), -20);
+
+		assertEquals(60, stock.getItemStock(is.getItemID()).getQuantity());
 	}
 	
 	@Test

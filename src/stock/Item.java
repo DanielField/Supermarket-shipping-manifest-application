@@ -30,8 +30,9 @@ public abstract class Item {
 	 * Set the manufacturing cost of the item.
 	 * 
 	 * @param manufacturingCost How much the item costs to manufacture.
+	 * @throws StockException Throws if cost is less than 0.
 	 */
-	public abstract void setManufacturingCost(double manufacturingCost);
+	public abstract void setManufacturingCost(double manufacturingCost) throws StockException;
 	
 	/**
 	 * Get the sell price of the item.
@@ -44,8 +45,9 @@ public abstract class Item {
 	 * Set the sell price of the item.
 	 * 
 	 * @param sellPrice
+	 * @throws StockException Throws when the price is less than zero.
 	 */
-	public abstract void setSellPrice(double sellPrice);
+	public abstract void setSellPrice(double sellPrice) throws StockException;
 	
 	/**
 	 * Get the reorder point of the item.
@@ -58,8 +60,9 @@ public abstract class Item {
 	 * Set the reorder point of the item.
 	 * 
 	 * @param reorderPoint
+	 * @throws StockException Throws if the reorder point is less than zero.
 	 */
-	public abstract void setReorderPoint(int reorderPoint);
+	public abstract void setReorderPoint(int reorderPoint) throws StockException;
 	
 	/**
 	 * Get the reorder amount for the item.
@@ -72,6 +75,7 @@ public abstract class Item {
 	 * Set the reorder amount for the item.
 	 * 
 	 * @param reorderAmount
+	 * @throws StockException Throws if the reorder amount is less than zero.
 	 */
-	public abstract void setReorderAmount(int reorderAmount);
+	public abstract void setReorderAmount(int reorderAmount) throws StockException;
 }

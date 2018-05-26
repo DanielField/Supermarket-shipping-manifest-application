@@ -52,8 +52,8 @@ public class OrdinaryTruck extends Truck {
 	public void addToCargo(Item item, int quantity) throws DeliveryException, StockException {
 		if (item.getClass() == PerishableItem.class)
 			throw new DeliveryException("Perishable goods must not go in a non-refrigerated truck.");
-		else if (quantity < 1)
-			throw new DeliveryException("Quantity is invalid. Must be one or higher.");
+		else if (quantity < 1 || quantity > capacity + getTotalCargo())
+			throw new DeliveryException("Quantity is invalid. Must be one or higher and less than the capacity.");
 		
 		if (cargo.containsItem(item)) {
 			ItemStock is = cargo.getItemStock(item);
