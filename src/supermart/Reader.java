@@ -14,6 +14,8 @@ import delivery.Truck;
 import exception.CSVFormatException;
 import exception.DeliveryException;
 import exception.StockException;
+import sales.Sale;
+import sales.SaleList;
 import stock.Item;
 import stock.OrdinaryItem;
 import stock.PerishableItem;

@@ -5,11 +5,10 @@ import static org.junit.Assert.*;
 import java.util.NoSuchElementException;
 
 import org.junit.Test;
-import supermart.Sale;
-import supermart.SaleList;
-
 import org.junit.Before;
 import exception.StockException;
+import sales.Sale;
+import sales.SaleList;
 
 
 /**

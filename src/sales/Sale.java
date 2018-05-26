@@ -1,7 +1,7 @@
 /**
  * 
  */
-package supermart;
+package sales;
 
 import exception.StockException;
 

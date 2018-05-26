@@ -1,7 +1,7 @@
 /**
  * 
  */
-package supermart;
+package sales;
 
 import java.util.ArrayList;
 import java.util.Iterator;

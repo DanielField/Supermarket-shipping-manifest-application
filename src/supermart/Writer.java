@@ -11,6 +11,8 @@ import java.io.IOException;
 import delivery.Manifest;
 import delivery.RefrigeratedTruck;
 import delivery.Truck;
+import sales.Sale;
+import sales.SaleList;
 import stock.Item;
 import stock.ItemStock;
 import stock.OrdinaryItem;
